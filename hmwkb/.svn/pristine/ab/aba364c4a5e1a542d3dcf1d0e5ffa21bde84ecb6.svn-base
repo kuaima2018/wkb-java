@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.ScheduleDao">
+
+    <insert id="insertData" parameterType="com.heima.model.ScheduleModel">
+        INSERT INTO [wkb_schedule]
+        ([u_id]
+        ,[s_schdate]
+        ,[s_schtext]
+        ,[s_dailytext]
+        ,[s_remindrule]
+        ,[s_remindtime]
+        ,[creator]
+        ,[crtdatetime])
+        VALUES
+        (#{uid}
+        ,#{sschdate}
+        ,#{sschtext}
+        ,#{sdailytext}
+        ,#{sremindrule}
+        ,#{sremindtime}
+        ,#{creator}
+        ,#{crtdatetime})
+    </insert>
+
+    <resultMap type="com.heima.model.ScheduleModel" id="schedulemap">
+        <id column="id" property="id"/>
+        <id column="u_id" property="uid"/>
+        <result column="s_schdate" property="sschdate"/>
+        <result column="s_schtext" property="sschtext"/>
+        <result column="s_dailytext" property="sdailytext"/>
+        <result column="s_remindrule" property="sremindrule"/>
+        <result column="s_remindtime" property="sremindtime"/>
+        <result column="creator" property="creator"/>
+        <result column="crtdatetime" property="crtdatetime"/>
+
+    </resultMap>
+    <update id="updateDataByPK"  parameterType="com.heima.model.ScheduleModel" >
+    UPDATE [dbo].[wkb_schedule]
+    SET [s_schdate] =#{sschdate}
+    ,[s_schtext] = #{sschtext}
+    ,[s_dailytext] = #{sdailytext}
+    ,[s_remindrule] = #{sremindrule}
+    ,[s_remindtime] = #{sremindtime}
+    WHERE  [id] = #{id}
+    </update>
+    <select id="queryForList"  parameterType="com.heima.model.ScheduleModel" resultMap="schedulemap">
+		select * from  wkb_schedule   where u_id  = #{uid}
+	</select>
+
+    <select id="queryListByDate"  resultMap="schedulemap">
+        select * from  wkb_schedule  <![CDATA[ where u_id  = #{uid} and [s_schdate] >#{startDate} and [s_schdate] <#{endDate} ]]>
+    </select>
+
+
+	<delete id="deleteDataByPK" parameterType="com.heima.model.ScheduleModel">
+		delete from wkb_schedule where id = #{id}
+	</delete>
+</mapper>

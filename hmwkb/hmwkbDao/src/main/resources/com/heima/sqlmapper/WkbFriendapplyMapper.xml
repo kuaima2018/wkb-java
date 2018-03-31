@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.WkbFriendapplyDao">
+
+  <select id="getWkbFriendapply" parameterType="java.lang.Integer" resultType="com.heima.model.WkbFriendapply">
+      select * from wkb_friendapply where id=#{id}
+  </select>
+  <select id="findNewApply" resultType="com.heima.model.WkbFriendapply">
+      select * from wkb_friendapply where u_id=#{uId} and  app_uid=#{applyId} and  app_status=1 and read_status=1
+      and app_date>#{lastDate,jdbcType=TIMESTAMP}
+  </select>
+
+    <update id="updateNewApplyById" parameterType="com.heima.model.WkbFriendapply">
+        update wkb_friendapply
+        <set>
+            <if test="appStatus != null">
+                app_status = #{appStatus,jdbcType=TINYINT},
+            </if>
+            <if test="appStatusDate != null">
+                app_status_date = #{appStatusDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="readStatus != null">
+                read_status = #{readStatus,jdbcType=TINYINT},
+            </if>
+            <if test="readStatusDate != null">
+                read_status_date = #{readStatusDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                remark=#{remark,jdbcType=NVARCHAR},
+            </if>
+        </set>
+        where id=#{id} and u_id=#{uId} and app_status=1
+    </update>
+
+   <update id="updateNewApplysByUserId" parameterType="com.heima.model.WkbFriendapply">
+       update wkb_friendapply
+       <set>
+           <if test="appStatus != null">
+               app_status = #{appStatus,jdbcType=TINYINT},
+           </if>
+           <if test="appStatusDate != null">
+               app_status_date = #{appStatusDate,jdbcType=TIMESTAMP},
+           </if>
+           <if test="readStatus != null">
+               read_status = #{readStatus,jdbcType=TINYINT},
+           </if>
+           <if test="readStatusDate != null">
+               read_status_date = #{readStatusDate,jdbcType=TIMESTAMP},
+           </if>
+           <if test="remark != null">
+               remark=#{remark,jdbcType=NVARCHAR},
+           </if>
+       </set>
+        where u_id=#{uId} and  app_uid=#{appUid} and app_status=1
+   </update>
+
+
+    <update id="updateApplySend">
+        update wkb_friendapply set send_count=send_count+1,send_succ=#{sendSucc},send_date=#{sendDate,jdbcType=TIMESTAMP}
+        where id=#{id}
+    </update>
+
+    <insert id="insertData" parameterType="com.heima.model.WkbFriendapply" useGeneratedKeys="true" keyProperty="id">
+        insert into wkb_friendapply (u_id, app_uid,
+        app_name, app_status, app_date,
+        app_status_date, read_status, read_status_date,send_succ,send_count,remark
+        )
+        values (#{uId,jdbcType=INTEGER}, #{appUid,jdbcType=INTEGER},
+        #{appName,jdbcType=NVARCHAR}, #{appStatus,jdbcType=TINYINT}, #{appDate,jdbcType=TIMESTAMP},
+        #{appStatusDate,jdbcType=TIMESTAMP}, #{readStatus,jdbcType=TINYINT}, #{readStatusDate,jdbcType=TIMESTAMP},
+        #{sendSucc,jdbcType=TINYINT}, #{sendCount,jdbcType=INTEGER},#{remark,jdbcType=NVARCHAR}
+        )
+    </insert>
+
+    <update id="updateApplyReadByIds">
+        update wkb_friendapply set read_status=0,read_status_date = #{readStatusDate,jdbcType=TIMESTAMP} where
+        <foreach collection="idList" separator="or" item="item">
+             id=#{item}
+        </foreach>
+    </update>
+
+    <update id="updateApplyReadByUserIds" >
+        update wkb_friendapply set read_status=0 ,read_status_date = #{readStatusDate,jdbcType=TIMESTAMP} where u_id=#{uId} and  read_status=0 and (
+        <foreach collection="applyIdList" separator="or" item="item">
+            app_uid=#{item}
+        </foreach>
+        )
+    </update>
+
+    <!-- sql server -->
+    <!--<select id="queryApplyPage" resultType="com.heima.model.WkbFriendapply">
+       select * from
+        (
+          select *,ROW_X_NUMBER() OVER (
+          <if test="orderBy!=null">
+              <foreach collection="orderBy" item="order" open="order by " separator="," close="  ">
+                  #{order}
+              </foreach>
+              desc
+          </if>
+
+        ) as rank from wkb_friendapply
+        <where>
+           <if test="wkbFriendapply.uId!=null">
+               u_id=#{wkbFriendapply.uId}
+           </if>
+           <if test="wkbFriendapply.appUid!=null">
+               and app_uid=#{wkbFriendapply.appUid}
+           </if>
+            <if test="wkbFriendapply.appStatus!=null">
+               and app_status=#{wkbFriendapply.appStatus}
+            </if>
+            <if test="wkbFriendapply.readStatus!=null">
+               and read_status=#{wkbFriendapply.readStatus}
+            </if>
+
+        </where>
+        ) as t where t.rank between #{startPos} and #{endPos}
+    </select> -->
+
+    <select id="queryApplyPage" resultType="com.heima.model.WkbFriendapply">
+        select * from wkb_friendapply
+        <where>
+            <if test="wkbFriendapply.uId!=null">
+                u_id=#{wkbFriendapply.uId}
+            </if>
+            <if test="wkbFriendapply.appUid!=null">
+                and app_uid=#{wkbFriendapply.appUid}
+            </if>
+            <if test="wkbFriendapply.appStatus!=null">
+                and app_status=#{wkbFriendapply.appStatus}
+            </if>
+            <if test="wkbFriendapply.readStatus!=null">
+                and read_status=#{wkbFriendapply.readStatus}
+            </if>
+        </where>
+        <if test="orderBy!=null">
+            <foreach collection="orderBy" item="order" open="order by " separator="," close="  ">
+                ${order} desc
+            </foreach>
+        </if>  limit #{startPos}, #{endPos}
+    </select>
+
+
+    <delete id="deleteApplyByIds">
+        delete from wkb_friendapply where u_id=#{uId} and
+        <foreach collection="idList" separator="or" item="item" open="(" close=")">
+            id=#{item}
+        </foreach>
+    </delete>
+</mapper>

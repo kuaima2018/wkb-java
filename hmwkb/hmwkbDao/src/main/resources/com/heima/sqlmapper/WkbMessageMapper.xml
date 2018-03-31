@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.WkbMessageDao">
+
+    <insert id="addMessage" parameterType="com.heima.model.WkbMessage">
+        insert into wkb_message(message,createtime) values (#{message},#{createtime,jdbcType=TIMESTAMP});
+    </insert>
+
+    <!-- sql server -->
+    <!--<select id="queryMessages" resultType="com.heima.model.WkbMessage">
+    <![CDATA[   select * from (select a.*,ROW_X_NUMBER() OVER( order by createtime asc) as rank from wkb_message a where createtime>=#{startDate,jdbcType=TIMESTAMP} and createtime<=#{endDate,jdbcType=TIMESTAMP} ) as tt
+    where tt.rank between #{startPos} and #{endPos} ]]>
+    </select> -->
+
+    <select id="queryMessages" resultType="com.heima.model.WkbMessage">
+    <![CDATA[   select a.* from wkb_message a where createtime>=#{startDate,jdbcType=TIMESTAMP} and createtime<=#{endDate,jdbcType=TIMESTAMP}
+    order by createtime asc limit #{startPos}, #{endPos} ]]>
+    </select>
+
+</mapper>

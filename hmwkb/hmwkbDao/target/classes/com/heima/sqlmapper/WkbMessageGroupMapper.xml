@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbMessageGroupDao" >
+    <insert id="insertData" parameterType="com.heima.model.WkbMessageGroup" >
+        insert into wkb_message_group (userId, groupId,
+        groupName, groupType, createDate,createBy, valid, validDate)
+        values (#{userId,jdbcType=INTEGER}, #{groupId,jdbcType=INTEGER},
+        #{groupName,jdbcType=VARCHAR}, #{groupType,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP},
+        #{createBy,jdbcType=VARCHAR}, #{valid,jdbcType=TINYINT}, #{validDate,jdbcType=TIMESTAMP}
+        )
+    </insert>
+
+    <select id="queryByMessageGroup" parameterType="com.heima.model.WkbMessageGroup" resultType="com.heima.model.WkbMessageGroup">
+        select * from wkb_message_group
+        <where>
+        <if test="userId != null" >
+            userId=#{userId,jdbcType=INTEGER}
+        </if>
+        <if test="groupId != null" >
+            and groupId=#{groupId,jdbcType=INTEGER}
+        </if>
+        <if test="groupName != null" >
+            and groupName=#{groupName,jdbcType=VARCHAR}
+        </if>
+        <if test="groupType != null" >
+            and groupType=#{groupType,jdbcType=INTEGER}
+        </if>
+        </where>
+        and valid=1 order by groupId
+    </select>
+
+    <update id="modifyMessageGroupValid">
+        update wkb_message_group set valid=#{valid,jdbcType=TINYINT}, validDate=#{validDate,jdbcType=TIMESTAMP} where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="removeMessageGroup" parameterType="java.lang.Integer">
+        delete from wkb_message_group where id=#{id,jdbcType=INTEGER}
+    </delete>
+
+</mapper>

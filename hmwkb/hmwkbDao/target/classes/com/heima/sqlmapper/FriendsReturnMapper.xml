@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.FriendsReturnDao">
+
+    <resultMap type="com.heima.model.FriendsReturnModel" id="friendsquery">
+        <id column="u_id" property="uid"/>
+        <result column="u_name" property="uname"/>
+        <result column="u_sex" property="usex"/>
+        <result column="o_name" property="uname"/>
+        <result column="g_id" property="gid"/>
+        <result column="g_groupname" property="ggroupname"/>
+
+    </resultMap>
+
+    <select id="queryForList"  parameterType="com.heima.model.FriendsReturnModel" resultMap="friendsquery">
+        select a.f_uid as u_id,(select b.u_name from wkb.wkb_user b where b.u_id=a.f_uid) as u_name,
+        (select b.u_sex from wkb_user b where b.u_id=a.f_uid) as u_sex,
+        a.g_id as g_id,a.g_groupname as g_groupname from wkb_friends a where a.u_id  = #{uid}
+
+	</select>
+
+</mapper>

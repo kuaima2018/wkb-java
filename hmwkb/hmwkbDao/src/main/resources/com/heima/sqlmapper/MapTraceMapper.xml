@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.MapTraceDao">
+
+    <insert id="insertData" parameterType="com.heima.model.MapTrace">
+        insert into wkb_maptrace(u_id,m_tracedate,m_lalo,creator,crtdatetime) values (#{uid},#{mTraceDate},#{mLalo},#{creator},#{crtDatetime});
+    </insert>
+
+    <resultMap type="com.heima.model.MapTrace" id="usermap">
+        <id column="id" property="mid"/>
+        <id column="u_id" property="uid"/>
+        <!--<result column="m_tracedate" property="mTraceDate"/>-->
+        <result column="m_lalo" property="mLalo"/>
+        <result column="creator" property="creator"/>
+        <result column="crtdatetime" property="crtDatetime"/>
+    </resultMap>
+
+    <select id="queryForList"  parameterType="com.heima.model.MapTrace" resultMap="usermap">
+		select * from  wkb.wkb_maptrace   where u_id  = #{uid}
+	</select>
+	
+	
+	<delete id="deleteDataByPK" parameterType="com.heima.model.MapTrace">
+		delete from wkb_maptrace where m_id = #{mid}
+	</delete>
+
+
+    <select id="queryFrends" parameterType="java.util.List" resultType="java.util.List" resultMap="usermap">
+        select a.u_id as u_id,a.crtdatetime as crtdatetime ,a.m_lalo as m_lalo,creator from wkb_maptrace a
+        inner JOIN(select u_id, MAX(crtdatetime) as maxDate from wkb_maptrace group by u_id) b
+        where a.u_id=b.u_id and a.crtdatetime=b.maxDate and a.u_id in(
+        <foreach collection ="list"  separator="," item="item">
+            #{item}
+        </foreach>
+          )
+    </select>
+
+    <select id="queryTracepath" parameterType="com.heima.json.Trackinput"  resultMap="usermap">
+        select id,u_id,crtdatetime,m_lalo from wkb_maptrace where m_tracedate=#{time, jdbcType=DATE} and u_id= #{uid}
+    </select>
+
+    <select id="queryTraceDefsfrdsusr" parameterType="com.heima.json.Trackinput"  resultMap="usermap">
+        select a.u_id as u_id,a.creator,a.crtdatetime as crtdatetime ,a.m_lalo as m_lalo from wkb_maptrace a
+        inner JOIN(select u_id, MAX(crtdatetime) as maxDate from wkb_maptrace where m_tracedate=#{time,jdbcType=DATE} group by u_id) b
+        where a.u_id=b.u_id and a.crtdatetime=b.maxDate and a.m_tracedate=#{time, jdbcType=DATE}
+        and a.u_id in (select f_uid from wkb_defshare where u_id= #{uid})
+    </select>
+
+    <!--sql server -->
+    <!--<select id="queryLastMapTraceByUsers"  resultType="com.heima.model.MapTrace">
+        select * from (select a.id,a.u_id,a.m_lalo,a.creator,a.crtdatetime, row_x_number() over(partition by u_id order by crtdatetime desc) rn from wkb_maptrace a  where a.m_tracedate=#{lastDate, jdbcType=DATE} and
+        <foreach collection ="uIdList"  separator="or" item="item" open="(" close=")">
+            u_id=#{item}
+        </foreach>) as <![CDATA[  t where t.rn<=1 ]]>
+    </select> -->
+
+    <select id="queryLastMapTraceByUsers"  resultType="com.heima.model.MapTrace">
+        select a.id,a.u_id,a.m_lalo,a.creator,a.crtdatetime from wkb_maptrace a
+        INNER JOIN (select max(crtdatetime) crt,u_id from wkb_maptrace b
+        where b.m_tracedate=#{lastDate, jdbcType=DATE} and
+        <foreach collection ="uIdList"  separator="or" item="item" open="(" close=")">
+            b.u_id=#{item}
+        </foreach> GROUP BY b.u_id ) c where a.u_id=c.u_id and a.crtdatetime=c.crt
+    </select>
+
+</mapper>

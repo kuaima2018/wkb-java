@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbCustomerGroupDao" >
+
+    <insert id="insertData" parameterType="com.heima.model.WkbCustomerGroup" >
+        insert into wkb_customergroup (groupId, groupName, userId,createBy,
+          createDate)
+        values (#{groupId,jdbcType=INTEGER}, #{groupName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},#{createBy,jdbcType=VARCHAR},
+          #{createDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateGroup" parameterType="com.heima.model.WkbCustomerGroup" >
+        update wkb_customergroup set groupName = #{groupName,jdbcType=VARCHAR}
+        where groupId=#{groupId,jdbcType=INTEGER} and userId=#{userId,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteGroup">
+        delete from wkb_customergroup where groupId=#{groupId,jdbcType=INTEGER} and userId=#{userId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="queryAll" parameterType="java.lang.Integer" resultType="com.heima.model.WkbCustomerGroup">
+        select * from wkb_customergroup where userId=#{userId,jdbcType=INTEGER} order by groupId
+    </select>
+
+</mapper>

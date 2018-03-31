@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.WkbUserDao">
+
+    <insert id="insertData" parameterType="com.heima.model.WkbUser" >
+        insert into wkb_user (u_id, u_identifier,u_name, u_pwd,
+        u_sex, u_brithday, u_title,
+        u_mobile, u_tel, u_fax,
+        u_email, u_addr, u_zipcode,
+        u_default, c_id, u_company,u_income,o_id,
+        p_id, okc_flag, u_admin,
+        u_onoff, task_share, u_appkey,
+        u_appsecret, creator, crtdatetime,
+        logintime,imageUrl)
+        values (#{uId,jdbcType=INTEGER}, #{uIdentifier,jdbcType=VARCHAR}, #{uName,jdbcType=VARCHAR}, #{uPwd,jdbcType=VARCHAR},
+        #{uSex,jdbcType=TINYINT}, #{uBrithday,jdbcType=TIMESTAMP}, #{uTitle,jdbcType=VARCHAR},
+        #{uMobile,jdbcType=VARCHAR}, #{uTel,jdbcType=VARCHAR}, #{uFax,jdbcType=VARCHAR},
+        #{uEmail,jdbcType=VARCHAR}, #{uAddr,jdbcType=VARCHAR}, #{uZipcode,jdbcType=VARCHAR},
+        #{uDefault,jdbcType=INTEGER}, #{cId,jdbcType=VARCHAR}, #{uCompany,jdbcType=VARCHAR},#{uIncome,jdbcType=VARCHAR},#{oId,jdbcType=INTEGER},
+        #{pId,jdbcType=INTEGER}, #{okcFlag,jdbcType=TINYINT}, #{uAdmin,jdbcType=TINYINT},
+        #{uOnoff,jdbcType=TINYINT}, #{taskShare,jdbcType=VARCHAR}, #{uAppkey,jdbcType=VARCHAR},
+        #{uAppsecret,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{crtdatetime,jdbcType=TIMESTAMP},
+        #{logintime,jdbcType=TIMESTAMP},#{imageUrl,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.heima.model.WkbUser" >
+        insert into dbo.wkb_user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="uId != null" >
+                u_id,
+            </if>
+            <if test="uName != null" >
+                u_name,
+            </if>
+            <if test="uPwd != null" >
+                u_pwd,
+            </if>
+            <if test="uSex != null" >
+                u_sex,
+            </if>
+            <if test="uBrithday != null" >
+                u_brithday,
+            </if>
+            <if test="uTitle != null" >
+                u_title,
+            </if>
+            <if test="uMobile != null" >
+                u_mobile,
+            </if>
+            <if test="uTel != null" >
+                u_tel,
+            </if>
+            <if test="uFax != null" >
+                u_fax,
+            </if>
+            <if test="uEmail != null" >
+                u_email,
+            </if>
+            <if test="uAddr != null" >
+                u_addr,
+            </if>
+            <if test="uZipcode != null" >
+                u_zipcode,
+            </if>
+            <if test="uDefault != null" >
+                u_default,
+            </if>
+            <if test="cId != null" >
+                c_id,
+            </if>
+            <if test="oId != null" >
+                o_id,
+            </if>
+            <if test="pId != null" >
+                p_id,
+            </if>
+            <if test="okcFlag != null" >
+                okc_flag,
+            </if>
+            <if test="uAdmin != null" >
+                u_admin,
+            </if>
+            <if test="uOnoff != null" >
+                u_onoff,
+            </if>
+            <if test="taskShare != null" >
+                task_share,
+            </if>
+            <if test="uAppkey != null" >
+                u_appkey,
+            </if>
+            <if test="uAppsecret != null" >
+                u_appsecret,
+            </if>
+            <if test="creator != null" >
+                creator,
+            </if>
+            <if test="crtdatetime != null" >
+                crtdatetime,
+            </if>
+            <if test="logintime != null" >
+                logintime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="uId != null" >
+                #{uId,jdbcType=INTEGER},
+            </if>
+            <if test="uName != null" >
+                #{uName,jdbcType=VARCHAR},
+            </if>
+            <if test="uPwd != null" >
+                #{uPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="uSex != null" >
+                #{uSex,jdbcType=TINYINT},
+            </if>
+            <if test="uBrithday != null" >
+                #{uBrithday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="uTitle != null" >
+                #{uTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="uMobile != null" >
+                #{uMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="uTel != null" >
+                #{uTel,jdbcType=VARCHAR},
+            </if>
+            <if test="uFax != null" >
+                #{uFax,jdbcType=VARCHAR},
+            </if>
+            <if test="uEmail != null" >
+                #{uEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="uAddr != null" >
+                #{uAddr,jdbcType=VARCHAR},
+            </if>
+            <if test="uZipcode != null" >
+                #{uZipcode,jdbcType=VARCHAR},
+            </if>
+            <if test="uDefault != null" >
+                #{uDefault,jdbcType=INTEGER},
+            </if>
+            <if test="cId != null" >
+                #{cId,jdbcType=VARCHAR},
+            </if>
+            <if test="oId != null" >
+                #{oId,jdbcType=INTEGER},
+            </if>
+            <if test="pId != null" >
+                #{pId,jdbcType=INTEGER},
+            </if>
+            <if test="okcFlag != null" >
+                #{okcFlag,jdbcType=TINYINT},
+            </if>
+            <if test="uAdmin != null" >
+                #{uAdmin,jdbcType=TINYINT},
+            </if>
+            <if test="uOnoff != null" >
+                #{uOnoff,jdbcType=TINYINT},
+            </if>
+            <if test="taskShare != null" >
+                #{taskShare,jdbcType=VARCHAR},
+            </if>
+            <if test="uAppkey != null" >
+                #{uAppkey,jdbcType=VARCHAR},
+            </if>
+            <if test="uAppsecret != null" >
+                #{uAppsecret,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null" >
+                #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="crtdatetime != null" >
+                #{crtdatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="logintime != null" >
+                #{logintime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getUser" parameterType="string" resultType="com.heima.model.WkbUser">
+        select * from  wkb_user where u_id=#{uId}
+    </select>
+
+    <select id="queryUserByMobile" parameterType="string" resultType="com.heima.model.WkbUser">
+        select * from  wkb_user where u_mobile=#{mobile}
+    </select>
+
+    <select id="queryUserByIdentifier" parameterType="string" resultType="com.heima.model.WkbUser">
+        select * from  wkb_user where u_identifier=#{identifier} and u_onoff=1
+    </select>
+
+    <update id="updateApply"  parameterType="com.heima.model.WkbUser">
+        update wkb_user set c_id=#{cId},okc_flag=0,u_admin=null,applytime=#{applytime,jdbcType=TIMESTAMP},u_company=#{uCompany,jdbcType=VARCHAR} where u_id=#{uId} and (okc_flag = 0 or okc_flag=2 or okc_flag is null)
+    </update>
+
+    <update id="updateUser" parameterType="com.heima.model.WkbUser" >
+        update wkb_user
+        <set >
+            <if test="uName != null" >
+                u_name = #{uName,jdbcType=VARCHAR},
+            </if>
+            <if test="uIdentifier != null" >
+                u_identifier = #{uIdentifier,jdbcType=VARCHAR},
+            </if>
+            <if test="uPwd != null" >
+                u_pwd = #{uPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="uSex != null" >
+                u_sex = #{uSex,jdbcType=TINYINT},
+            </if>
+            <if test="uBrithday != null" >
+                u_brithday = #{uBrithday,jdbcType=TIMESTAMP},
+            </if>
+            <if test="uTitle != null" >
+                u_title = #{uTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="uMobile != null" >
+                u_mobile = #{uMobile,jdbcType=VARCHAR},
+            </if>
+            <if test="uTel != null" >
+                u_tel = #{uTel,jdbcType=VARCHAR},
+            </if>
+            <if test="uFax != null" >
+                u_fax = #{uFax,jdbcType=VARCHAR},
+            </if>
+            <if test="uEmail != null" >
+                u_email = #{uEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="uAddr != null" >
+                u_addr = #{uAddr,jdbcType=VARCHAR},
+            </if>
+            <if test="uZipcode != null" >
+                u_zipcode = #{uZipcode,jdbcType=VARCHAR},
+            </if>
+            <if test="uDefault != null" >
+                u_default = #{uDefault,jdbcType=INTEGER},
+            </if>
+            <if test="cId != null" >
+                c_id = #{cId,jdbcType=VARCHAR},
+            </if>
+            <if test="uIncome != null" >
+                u_income = #{uIncome,jdbcType=VARCHAR},
+            </if>
+            <if test="uCompany != null" >
+                u_company = #{uCompany,jdbcType=VARCHAR},
+            </if>
+            <if test="oId != null" >
+                o_id = #{oId,jdbcType=INTEGER},
+            </if>
+            <if test="pId != null" >
+                p_id = #{pId,jdbcType=INTEGER},
+            </if>
+            <if test="okcFlag != null" >
+                okc_flag = #{okcFlag,jdbcType=TINYINT},
+            </if>
+            <if test="uAdmin != null" >
+                u_admin = #{uAdmin,jdbcType=TINYINT},
+            </if>
+            <if test="uOnoff != null" >
+                u_onoff = #{uOnoff,jdbcType=TINYINT},
+            </if>
+            <if test="taskShare != null" >
+                task_share = #{taskShare,jdbcType=VARCHAR},
+            </if>
+            <if test="uAppkey != null" >
+                u_appkey = #{uAppkey,jdbcType=VARCHAR},
+            </if>
+            <if test="uAppsecret != null" >
+                u_appsecret = #{uAppsecret,jdbcType=VARCHAR},
+            </if>
+            <if test="creator != null" >
+                creator = #{creator,jdbcType=VARCHAR},
+            </if>
+            <if test="crtdatetime != null" >
+                crtdatetime = #{crtdatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="logintime != null" >
+                logintime = #{logintime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="imageUrl != null" >
+                imageUrl = #{imageUrl,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where u_id=#{uId,jdbcType=INTEGER}
+    </update>
+
+    <select id="querUserList" parameterType="java.util.List" resultType="com.heima.model.WkbUser">
+        select * from wkb_user where
+        (<foreach collection="list" separator="or" item="item">
+            u_id = #{item,jdbcType=INTEGER}
+        </foreach>)
+    </select>
+
+    <select id="findUserByName" parameterType="java.lang.String" resultType="com.heima.model.WkbUser">
+        select * from  wkb_user where  u_name = #{uName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findByPrimary"  resultType="com.heima.model.WkbUser">
+        SELECT * FROM  wkb_user where u_id = #{uId,jdbcType=INTEGER} and u_admin = #{uAdmin,jdbcType=TINYINT}
+    </select>
+
+    <select id="findAllByCId"  resultType="com.heima.model.WkbUser">
+        SELECT * FROM  wkb_user where c_id = #{cId} and okc_flag = 1
+    </select>
+
+    <select id="findByCId"  resultType="com.heima.model.WkbUser">
+        SELECT * FROM  wkb_user where c_id = #{cId} and u_admin = #{uAdmin,jdbcType=TINYINT} and okc_flag = #{okcFlag,jdbcType=TINYINT}
+    </select>
+
+    <!-- sql server -->
+    <!--<select id="getPageCompanyApplyUsers" resultType="com.heima.model.WkbUser">
+        select * from (select a.*, ROW_X_NUMBER() OVER( order by a.u_id) as rank from wkb_user a where c_id = #{userQuery.cId} and (a.okc_flag = 0 or a.okc_flag =2 or a.okc_flag is null)
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+         <if test="userQuery.jointEndTime !=null">
+             <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+         </if>) as tt where tt.rank between #{startPos} and #{endPos}
+    </select>-->
+
+    <select id="getPageCompanyApplyUsers" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a where c_id = #{userQuery.cId} and (a.okc_flag = 0 or a.okc_flag =2 or a.okc_flag is null)
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointEndTime !=null">
+            <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if> order by a.u_id limit #{startPos}, #{endPos}
+    </select>
+
+    <select id="getCountCompanyApplyUsers" resultType="java.lang.Integer">
+        select count(a.u_id) from wkb_user a where c_id = #{userQuery.cId} and (a.okc_flag = 0 or a.okc_flag =2 or a.okc_flag is null)
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointEndTime !=null">
+            <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+    </select>
+
+    <!-- sql server -->
+    <!--<select id="getPageCompanyUsers" resultType="com.heima.model.WkbUser">
+        select * from (select a.*, ROW_X_NUMBER() OVER( order by a.u_id) as rank from wkb_user a where c_id = #{userQuery.cId} /*and a.okc_flag = 1*/
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointEndTime !=null">
+            <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.uAdmin !=null and userQuery.uAdmin ==1">
+            and (a.u_admin =1 or a.u_admin=2)
+        </if>
+        <if test="userQuery.uAdmin !=null and userQuery.uAdmin !=1">
+            and (a.u_admin =0 or a.u_admin is null)
+        </if>) as tt where tt.rank between #{startPos} and #{endPos}
+    </select> -->
+
+    <select id="getPageCompanyUsers" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a where c_id = #{userQuery.cId} /*and a.okc_flag = 1*/
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointEndTime !=null">
+            <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.uAdmin !=null and userQuery.uAdmin ==1">
+            and (a.u_admin =1 or a.u_admin=2)
+        </if>
+        <if test="userQuery.uAdmin !=null and userQuery.uAdmin !=1">
+            and (a.u_admin =0 or a.u_admin is null)
+        </if> order by a.u_id limit #{startPos},#{endPos}
+    </select>
+
+    <select id="getCountCompanyUsers" resultType="java.lang.Integer">
+        select count(a.u_id) from wkb_user a where c_id = #{userQuery.cId} /*and a.okc_flag = 1*/
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointEndTime !=null">
+            <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.uAdmin !=null and userQuery.uAdmin ==1">
+            and (a.u_admin =1 or a.u_admin=2)
+        </if>
+        <if test="userQuery.uAdmin !=null and userQuery.uAdmin !=1">
+            and (a.u_admin =0 or a.u_admin is null)
+        </if>
+    </select>
+
+    <select id="getCountCompanyFormalUsers" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(a.u_id) from wkb_user a where c_id = #{companyId} and a.okc_flag = 1
+    </select>
+
+    <select id="getPageCompanyFormalUsers" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a where c_id = #{companyId} and a.okc_flag = 1 and a.u_id!={exculdeUserId}
+         order by a.u_name limit #{index},#{pageSize}
+    </select>
+
+    <update id="updateUsersByJoint">
+        update wkb_user set okc_flag=1,jointime=#{jointtime,jdbcType=TIMESTAMP} where (okc_flag = 0 or okc_flag =2 or okc_flag=null) and c_id=#{cId} and
+        <foreach collection="uIdList" open="(" close=")" item="item" separator="or">
+            u_id=#{item}
+        </foreach>
+    </update>
+
+    <update id="updateUsersByAdminAdd">
+        update wkb_user set u_admin =1  where /*okc_flag = 1 and*/ c_id=#{cId} and (u_admin =0 or u_admin is null) and
+        <foreach collection="uIdList" open="(" close=")" item="item" separator="or">
+            u_id=#{item}
+        </foreach>
+    </update>
+
+
+    <update id="updateUsersByAdminAddAndApply">
+        update wkb_user set u_admin =1,okc_flag = 2  where /*okc_flag = 1 and*/ c_id=#{cId} and (u_admin =0 or u_admin is null) and
+        <foreach collection="uIdList" open="(" close=")" item="item" separator="or">
+            u_id=#{item}
+        </foreach>
+    </update>
+
+    <update id="updateUsersByAdminDel">
+        update wkb_user set u_admin =0  where /*okc_flag = 1 and*/ c_id=#{cId} and (u_admin =1 or u_admin =2) and
+        <foreach collection="uIdList" open="(" close=")" item="item" separator="or">
+            u_id=#{item}
+        </foreach>
+    </update>
+
+    <select id="queryFuzzyByCompanyName" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a where u_onoff=1 and u_company like CONCAT('%',#{companyName},'%') order by a.u_id limit #{startPos}, #{endPos}
+    </select>
+
+    <select id="queryFuzzyByMobile" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a where u_onoff=1 and u_mobile like CONCAT('%',#{mobile},'%') order by a.u_id limit #{startPos}, #{endPos}
+    </select>
+
+    <select id="queryFuzzyByName" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a where u_onoff=1 and u_name like CONCAT('%',#{name},'%') order by a.u_id limit #{startPos}, #{endPos}
+    </select>
+
+    <select id="queryFuzzyByPosition" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a where u_onoff=1 and u_title like CONCAT('%',#{position},'%') order by a.u_id limit #{startPos}, #{endPos}
+    </select>
+</mapper>

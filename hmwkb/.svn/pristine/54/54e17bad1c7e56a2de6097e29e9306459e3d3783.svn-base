@@ -1,0 +1,136 @@
+package com.heima.json;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: xuzk
+ * Date: 2015/4/16
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class JsonSchedule implements Serializable {
+    private Date date;
+    private String schedule;
+    private String scheduleNotation;
+    private Integer scheduleNotationId;
+    private String scheduleNotationName;
+    private String scheduleNotationUrl;
+    private String daily;
+    private String dailyNotation;
+    private Integer dailyNotationId;
+    private String dailyNotationName;
+    private String dailyNotationUrl;
+    private Integer remind;
+    private Date remindTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
+    public Date getRemindTime() {
+        return remindTime;
+    }
+
+    public void setRemindTime(Date remindTime) {
+        this.remindTime = remindTime;
+    }
+
+    public String getDaily() {
+        return daily;
+    }
+
+    public void setDaily(String daily) {
+        this.daily = daily;
+    }
+
+    public String getDailyNotation() {
+        return dailyNotation;
+    }
+
+    public void setDailyNotation(String dailyNotation) {
+        this.dailyNotation = dailyNotation;
+    }
+
+    public Integer getDailyNotationId() {
+        return dailyNotationId;
+    }
+
+    public void setDailyNotationId(Integer dailyNotationId) {
+        this.dailyNotationId = dailyNotationId;
+    }
+
+    public String getDailyNotationName() {
+        return dailyNotationName;
+    }
+
+    public void setDailyNotationName(String dailyNotationName) {
+        this.dailyNotationName = dailyNotationName;
+    }
+
+    public String getDailyNotationUrl() {
+        return dailyNotationUrl;
+    }
+
+    public void setDailyNotationUrl(String dailyNotationUrl) {
+        this.dailyNotationUrl = dailyNotationUrl;
+    }
+
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+08:00")
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public Integer getRemind() {
+        return remind;
+    }
+
+    public void setRemind(Integer remind) {
+        this.remind = remind;
+    }
+
+    public String getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(String schedule) {
+        this.schedule = schedule;
+    }
+
+    public String getScheduleNotation() {
+        return scheduleNotation;
+    }
+
+    public void setScheduleNotation(String scheduleNotation) {
+        this.scheduleNotation = scheduleNotation;
+    }
+
+    public Integer getScheduleNotationId() {
+        return scheduleNotationId;
+    }
+
+    public void setScheduleNotationId(Integer scheduleNotationId) {
+        this.scheduleNotationId = scheduleNotationId;
+    }
+
+    public String getScheduleNotationName() {
+        return scheduleNotationName;
+    }
+
+    public void setScheduleNotationName(String scheduleNotationName) {
+        this.scheduleNotationName = scheduleNotationName;
+    }
+
+    public String getScheduleNotationUrl() {
+        return scheduleNotationUrl;
+    }
+
+    public void setScheduleNotationUrl(String scheduleNotationUrl) {
+        this.scheduleNotationUrl = scheduleNotationUrl;
+    }
+
+}

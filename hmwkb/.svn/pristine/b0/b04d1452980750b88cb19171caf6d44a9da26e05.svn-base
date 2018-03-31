@@ -1,0 +1,161 @@
+package com.heima.controller;
+
+//import cn.jpush.api.ErrorCodeEnum;
+//import cn.jpush.api.JPushClient;
+//import cn.jpush.api.MessageResult;//
+//import com.heima.common.WkbLoginResult;
+//import com.heima.common.WkbMessageEnum;
+//import com.heima.common.WkbResult;
+//import com.heima.json.AddUser;
+
+import com.heima.json.ScheduleJson;
+import com.heima.model.ScheduleModel;
+import com.heima.service.ScheduleService;
+import org.apache.commons.lang.time.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URLDecoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.Date;
+
+//import com.heima.service.biz.WkbBizException;
+//import com.heima.service.biz.WkbBizResult;
+//import com.heima.util.MD5Util;
+
+/**
+ * Created with (TC).
+ * User: 徐志凯
+ * Date: 14-4-8
+ * 橡果国际-系统集成部
+ * Copyright (c) 2012-2013 ACORN, Inc. All rights reserved.
+ */
+@Controller
+@RequestMapping({"/schedule"})
+public class ScheduleController extends BaseController {
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UserController.class);
+
+    @Autowired
+    private ScheduleService scheduleService;
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseBody
+    public ScheduleJson add(@RequestParam(required = false, defaultValue = "") String session,
+                      @RequestParam int uid,
+                      @RequestParam String sdate,
+                      @RequestParam(required = false, defaultValue = "") String stext,
+                      @RequestParam(required = false, defaultValue = "") String dtext,
+                      @RequestParam(required = false, defaultValue = "") int rule,
+                      @RequestParam(required = false, defaultValue = "") String remind,
+                      @RequestParam(required = false, defaultValue = "") String creator
+    ) throws Exception {
+        ScheduleJson jsonModel = new ScheduleJson();
+        ScheduleModel mode = new ScheduleModel();
+        mode.setUid(uid);
+        mode.setSschdate(setStringToDate(sdate));
+        mode.setSschtext(URLDecoder.decode(stext,"utf-8"));
+        mode.setSdailytext(URLDecoder.decode(dtext,"utf-8"));
+        mode.setSremindrule(rule);
+     mode.setSremindtime(setStringToDate(remind));
+
+
+        mode.setCreator(creator);
+        mode.setCrtdatetime(new java.util.Date());
+        int iResult = scheduleService.saveSchedule(mode);
+        if (iResult == 1) {
+            jsonModel.setMessage("添加成功");
+            jsonModel.setSuceess(true);
+
+        } else {
+            jsonModel.setMessage("添加失败");
+
+        }
+        //   jsonModel.setList(null);
+        return jsonModel;
+    }
+
+
+    //TestValue
+    //  /Session/1/2014-04-18/2014-04-20
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ResponseBody
+    public List<ScheduleModel> get(@RequestParam(required = false, defaultValue = "") String session,
+                      @RequestParam String uid,
+                      @RequestParam(required = false, defaultValue = "") String bDate,
+                      @RequestParam(required = false, defaultValue = "") String eDate) {
+        //    WkbResult wkbResult=new WkbResult();
+        //    wkbResult=this.checkSession(addUser.getSessionid(), uid);
+        //    if(wkbResult.getSuccess().booleanValue()==false)
+        //        return wkbResult;
+        List<ScheduleModel> modelList = new ArrayList<ScheduleModel>();
+        modelList = scheduleService.queryListByDate(uid, bDate, eDate);
+        return modelList;// JSON.toJSONString(modelList);
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    @ResponseBody
+    public ScheduleJson update(@RequestParam(required = false, defaultValue = "") String session,
+                      @RequestParam int id,
+                      @RequestParam int uid,
+                      @RequestParam String sdate,
+                      @RequestParam(required = false, defaultValue = "") String stext,
+                      @RequestParam(required = false, defaultValue = "") String dtext,
+                      @RequestParam(required = false, defaultValue = "") int rule,
+                      @RequestParam(required = false, defaultValue = "") String remind,
+                      @RequestParam(required = false, defaultValue = "") String creator
+    ) throws Exception {
+        ScheduleJson jsonModel = new ScheduleJson();
+        ScheduleModel mode = new ScheduleModel();
+        mode.setId(id);
+        mode.setUid(uid);
+        mode.setSschdate(setStringToDate(sdate));
+        mode.setSschtext(URLDecoder.decode(stext,"utf-8"));
+        mode.setSdailytext(URLDecoder.decode(dtext,"utf-8"));
+        mode.setSremindrule(rule);
+        mode.setSremindtime(setStringToDate(remind));
+
+        mode.setCreator(creator);
+        mode.setCrtdatetime(new java.util.Date());
+
+        //    WkbResult wkbResult=new WkbResult();
+        //    wkbResult=this.checkSession(addUser.getSessionid(), mode.getUid());
+        //    if(wkbResult.getSuccess().booleanValue()==false)
+        //        return wkbResult;
+
+
+        int iResult = scheduleService.updateSchedule(mode);
+        if (iResult == 1) {
+            jsonModel.setMessage("更新成功");
+            jsonModel.setSuceess(true);
+        } else {
+            jsonModel.setMessage("更新失败");
+        }
+        //   jsonModel.setList(null);
+        return jsonModel;
+    }
+
+    /**
+     * 字符串转日期
+     *
+     * @param date
+     * @return
+     */
+    public static Date setStringToDate(String date) {
+        Date formatDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            formatDate = sdf.parse(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return formatDate;
+
+    }
+
+}

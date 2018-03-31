@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbTaskfileDao" >
+  <resultMap id="BaseResultMap" type="com.heima.model.WkbTaskfile" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="t_id" property="tId" jdbcType="INTEGER" />
+    <result column="t_did" property="tDid" jdbcType="INTEGER" />
+    <result column="t_filename" property="tFilename" jdbcType="VARCHAR" />
+    <result column="t_filetype" property="tFiletype" jdbcType="VARCHAR" />
+    <result column="t_filesize" property="tFilesize" jdbcType="INTEGER" />
+    <result column="t_filepath" property="tFilepath" jdbcType="VARCHAR" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="crtdatetime" property="crtdatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, t_id, t_did, t_filename, t_filetype, t_filesize, t_filepath, creator, crtdatetime
+  </sql>
+
+  <insert id="insertSelective" parameterType="com.heima.model.WkbTaskfile" >
+    insert into dbo.wkb_taskfile
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tId != null" >
+        t_id,
+      </if>
+      <if test="tDid != null" >
+        t_did,
+      </if>
+      <if test="tFilename != null" >
+        t_filename,
+      </if>
+      <if test="tFiletype != null" >
+        t_filetype,
+      </if>
+      <if test="tFilesize != null" >
+        t_filesize,
+      </if>
+      <if test="tFilepath != null" >
+        t_filepath,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="crtdatetime != null" >
+        crtdatetime,
+      </if>
+      <if test="tFile != null" >
+        t_file,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="tId != null" >
+        #{tId,jdbcType=INTEGER},
+      </if>
+      <if test="tDid != null" >
+        #{tDid,jdbcType=INTEGER},
+      </if>
+      <if test="tFilename != null" >
+        #{tFilename,jdbcType=VARCHAR},
+      </if>
+      <if test="tFiletype != null" >
+        #{tFiletype,jdbcType=VARCHAR},
+      </if>
+      <if test="tFilesize != null" >
+        #{tFilesize,jdbcType=INTEGER},
+      </if>
+      <if test="tFilepath != null" >
+        #{tFilepath,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="crtdatetime != null" >
+        #{crtdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tFile != null" >
+        #{tFile,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+
+
+    <insert id="insertData" parameterType="com.heima.model.WkbTaskfile" >
+        insert into wkb_taskfile (t_id, t_did,
+        t_filename, t_filetype, t_filesize,
+        t_filepath, creator, crtdatetime,
+        t_file)
+        values (#{tId,jdbcType=INTEGER}, #{tDid,jdbcType=INTEGER},
+        #{tFilename,jdbcType=VARCHAR}, #{tFiletype,jdbcType=VARCHAR}, #{tFilesize,jdbcType=INTEGER},
+        #{tFilepath,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{crtdatetime,jdbcType=TIMESTAMP},
+        #{tFile,jdbcType=LONGVARBINARY,typeHandler=com.heima.dao.Mapper.StreamSaveHandler})
+    </insert>
+
+    <select id="queryFilesByTask" parameterType="java.lang.Integer" resultType="com.heima.model.WkbTaskfile">
+        select <include refid="Base_Column_List" /> from wkb_taskfile
+        where t_id=#{taskId}
+    </select>
+
+    <select id="queryMainFilesByTasks" parameterType="java.util.List" resultType="com.heima.model.WkbTaskfile">
+        select <include refid="Base_Column_List" /> from wkb_taskfile where
+        (<foreach collection="list" separator="or" item="item">
+            t_id=#{item}
+        </foreach>)
+        and (t_did is null)
+    </select>
+
+    <resultMap type="com.heima.model.WkbTaskfile" id="filemap">
+        <id column="id" property="id"/>
+        <result column="t_file" property="tFile" typeHandler="com.heima.dao.Mapper.StreamSaveHandler"/>
+    </resultMap>
+
+    <select id="getFileData" parameterType="java.lang.Integer" resultMap="filemap">
+        select id,t_file from  wkb_taskfile where id=#{id}
+    </select>
+</mapper>

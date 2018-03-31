@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbMessageGroupUserDao" >
+    <insert id="insertData" parameterType="com.heima.model.WkbMessageGroupUser" >
+        insert into wkb_message_group_user (groupId, userId, createBy, createDate, valid,validDate)
+        values (#{groupId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{createBy,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP}, #{valid,jdbcType=TINYINT}, #{validDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <select id="queryCountByGroup" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(*) from wkb_message_group_user where groupId = #{groupId,jdbcType=INTEGER} and valid=1
+    </select>
+
+    <select id="queryUserByGroup" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a,wkb_message_group_user b where a.u_id=b.userId and b.groupId = #{groupId,jdbcType=INTEGER} and valid=1
+        order by a.u_name limit #{index},#{pageSize}
+    </select>
+
+    <update id="modifyUserValidByGroup">
+        update wkb_message_group_user set valid=#{valid,jdbcType=TINYINT}, validDate=#{validDate,jdbcType=TIMESTAMP}
+        where groupId=#{groupId,jdbcType=INTEGER} and valid=1
+    </update>
+
+    <delete id="removeUserByGroup" parameterType="java.lang.Integer">
+        delete from wkb_message_group_user where groupId=#{groupId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="queryUser" resultType="com.heima.model.WkbMessageGroupUser">
+        select * from wkb_message_group_user where groupId=#{groupId,jdbcType=INTEGER} and
+        <foreach collection="userIdList" open="(" close=")" item="item" separator="or">
+            userId=#{item}
+        </foreach>
+        and valid=1
+    </select>
+
+    <delete id="removeUser">
+        delete from wkb_message_group_user where groupId=#{groupId,jdbcType=INTEGER} and
+        <foreach collection="userIdList" open="(" close=")" item="item" separator="or">
+            userId=#{item}
+        </foreach>
+    </delete>
+
+    <update id="modifyUserValid">
+        update wkb_message_group_user set valid=#{valid,jdbcType=TINYINT}, validDate=#{validDate,jdbcType=TIMESTAMP}
+        where groupId=#{groupId,jdbcType=INTEGER} and
+        <foreach collection="userIdList" open="(" close=")" item="item" separator="or">
+            userId=#{item}
+        </foreach>
+        and valid=1
+    </update>
+
+</mapper>

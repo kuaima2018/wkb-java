@@ -1,0 +1,64 @@
+package com.heima.dao;
+
+import com.chinadrtv.common.dal.BaseDao;
+import com.heima.dto.WkbUserQueryDto;
+import com.heima.model.SocialitySearch;
+import com.heima.model.WkbUser;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Created with (TC).
+ * User: 徐志凯
+ * Date: 14-4-8
+ * 橡果国际-系统集成部
+ * Copyright (c) 2012-2013 ACORN, Inc. All rights reserved.
+ */
+public interface WkbUserDao extends BaseDao<WkbUser> {
+    WkbUser getUser(Integer uId);
+    int updateApply(WkbUser wkbUser);
+    int updateUser(WkbUser wkbUser);
+    List<WkbUser> querUserList(List<Integer> uIdList);
+    WkbUser queryUserByMobile(String mobile);
+    WkbUser queryUserByIdentifier(String identifier);
+    int removeUser(Integer userId);
+
+
+    /********************************/
+    List<WkbUser> findUserByName(String uName);
+    List<WkbUser> findByPrimary(@Param(value="uId")Integer uId, @Param(value="uAdmin")Integer isAdmin);
+    List<WkbUser> findAllByCId(@Param(value="cId")String cId);
+    List<WkbUser> findByCId(@Param(value="cId")String cId, @Param(value="uAdmin")Integer isAdmin, @Param(value="okcFlag")Integer isJoin);
+
+
+    List<WkbUser> getPageCompanyApplyUsers(@Param(value="userQuery")WkbUserQueryDto wkbUserQueryDto,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+
+    int getCountCompanyApplyUsers(@Param(value="userQuery")WkbUserQueryDto wkbUserQueryDto);
+
+    int updateUsersByJoint(@Param(value="cId")String companyId , @Param(value="uIdList")List<Integer> uIdList,@Param(value="jointtime")Date jointTime);
+
+    List<WkbUser> getPageCompanyUsers(@Param(value="userQuery")WkbUserQueryDto wkbUserQueryDto,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+
+    int getCountCompanyUsers(@Param(value="userQuery")WkbUserQueryDto wkbUserQueryDto);
+
+    int updateUsersByAdminAdd(@Param(value="uIdList")List<Integer> uIdList, @Param(value="cId")String cId);
+
+    int updateUsersByAdminAddAndApply(@Param(value="uIdList")List<Integer> uIdList, @Param(value="cId")String cId);
+
+    int updateUsersByAdminDel(@Param(value="uIdList")List<Integer> uIdList, @Param(value="cId")String cId);
+
+    List<WkbUser> queryFuzzyByCompanyName(@Param(value="companyName")String companyName,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+    List<WkbUser> queryFuzzyByMobile(@Param(value="mobile")String mobile,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+    List<WkbUser> queryFuzzyByName(@Param(value="name")String name,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+    List<WkbUser> queryFuzzyByPosition(@Param(value="position")String position,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+
+    List<WkbUser> getPageCompanyFormalUsers(@Param(value="companyId")String companyId,@Param(value="exculdeUserId")Integer exculdeUserId,@Param(value="index")Integer index,@Param(value="pageSize")Integer pageSize);
+
+    int getCountCompanyFormalUsers(String companyId);
+
+    List<WkbUser> search(@Param(value="search")SocialitySearch socialitySearch,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+
+    List<WkbUser> queryFriends(@Param(value="userId")Integer userId,@Param(value="startPos")Integer startPos,@Param(value="endPos")Integer endPos);
+}

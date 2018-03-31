@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbOrgpostDao" >
+  <resultMap id="BaseResultMap" type="com.heima.model.WkbOrgpost" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="c_id" property="cId" jdbcType="VARCHAR" />
+    <result column="o_id" property="oId" jdbcType="INTEGER" />
+    <result column="p_id" property="pId" jdbcType="INTEGER" />
+    <result column="u_id" property="uId" jdbcType="INTEGER" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="crtdatetime" property="crtdatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, c_id, o_id, p_id, u_id, creator, crtdatetime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.heima.model.WkbOrgpost" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from dbo.wkb_orgpost
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dbo.wkb_orgpost
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wkb_orgpost
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.heima.model.WkbOrgpost" >
+    delete from wkb_orgpost
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insertData" parameterType="com.heima.model.WkbOrgpost" >
+    insert into wkb_orgpost (p_id, u_id, creator, crtdatetime)
+    values (#{pId,jdbcType=INTEGER}, #{uId,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR}, #{crtdatetime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.heima.model.WkbOrgpost" >
+    insert into wkb_orgpost
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cId != null" >
+        c_id,
+      </if>
+      <if test="oId != null" >
+        o_id,
+      </if>
+      <if test="pId != null" >
+        p_id,
+      </if>
+      <if test="uId != null" >
+        u_id,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="crtdatetime != null" >
+        crtdatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cId != null" >
+        #{cId,jdbcType=VARCHAR},
+      </if>
+      <if test="oId != null" >
+        #{oId,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="uId != null" >
+        #{uId,jdbcType=INTEGER},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="crtdatetime != null" >
+        #{crtdatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+
+    <select id="getAllOrgpostsByCompany" parameterType="java.lang.String" resultType="com.heima.model.WkbOrgpost">
+        select * from wkb_orgpost where p_id in (select distinct p_id from wkb_postright a,wkb_organization b where a.o_id =b.id and b.c_id=#{companyId})
+    </select>
+
+    <delete id="removeUserRolesByRoleId" parameterType="java.lang.Integer">
+        delete from wkb_orgpost where p_id=#{pId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="removeUserRolesByUserId">
+        delete from wkb_orgpost where p_id=#{pId,jdbcType=INTEGER} and u_id = #{uId,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="removeUserRoleById" parameterType="java.lang.Integer">
+        delete from wkb_orgpost where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="getUserRolesByRoleId" parameterType="java.lang.Integer" resultType="com.heima.model.WkbOrgpost">
+        select * from wkb_orgpost where p_id=#{pId,jdbcType=INTEGER}
+    </select>
+
+    <!-- sql server -->
+    <!--<select id="getPageUserRolesByRoleId" resultType="com.heima.model.WkbUser">
+        select * from (select a.*,ROW_X_NUMBER() OVER( order by a.u_id) as rank from wkb_user a,wkb_orgpost b where a.u_id=b.u_id and b.p_id=#{userQuery.roleId,jdbcType=INTEGER}
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+            <if test="userQuery.applyBeginTime !=null">
+                <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+            </if>
+            <if test="userQuery.applyEndTime !=null">
+                <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+            </if>
+            <if test="userQuery.jointBeginTime !=null">
+                <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+            </if>
+            <if test="userQuery.jointEndTime !=null">
+                <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+            </if>) as tt where tt.rank between #{startPos} and #{endPos}
+    </select> -->
+
+    <select id="getPageUserRolesByRoleId" resultType="com.heima.model.WkbUser">
+        select a.* from wkb_user a,wkb_orgpost b where a.u_id=b.u_id and b.p_id=#{userQuery.roleId,jdbcType=INTEGER}
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointEndTime !=null">
+            <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if> order by a.u_id limit #{startPos}, #{endPos}
+    </select>
+
+    <select id="getCountUserRolesByRoleId" resultType="java.lang.Integer">
+        select count(a.u_id) from wkb_user a,wkb_orgpost b where a.u_id=b.u_id and b.p_id=#{userQuery.roleId,jdbcType=INTEGER}
+        <if test="userQuery.uId != null" >
+            and a.u_id = #{userQuery.uId,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uName != null" >
+            and a.u_name = #{userQuery.uName,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uSex != null" >
+            and a.u_sex = #{userQuery.uSex,jdbcType=TINYINT}
+        </if>
+        <if test="userQuery.uTitle != null" >
+            and a.u_title = #{userQuery.uTitle,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uMobile != null" >
+            and a.u_mobile = #{userQuery.uMobile,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uTel != null" >
+            and a.u_tel = #{userQuery.uTel,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uFax != null" >
+            and a.u_fax = #{userQuery.uFax,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uEmail != null" >
+            and a.u_email = #{userQuery.uEmail,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uAddr != null" >
+            and a.u_addr = #{userQuery.uAddr,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.uZipcode != null" >
+            and a.u_zipcode = #{userQuery.uZipcode,jdbcType=VARCHAR}
+        </if>
+        <if test="userQuery.applyBeginTime !=null">
+            <![CDATA[ and a.applytime>=#{userQuery.applyBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.applyEndTime !=null">
+            <![CDATA[ and a.applytime<=#{userQuery.applyEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointBeginTime !=null">
+            <![CDATA[ and a.jointime>=#{userQuery.jointBeginTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+        <if test="userQuery.jointEndTime !=null">
+            <![CDATA[ and a.jointime<=#{userQuery.jointEndTime,jdbcType=TIMESTAMP}  ]]>
+        </if>
+    </select>
+
+    <update id="resetCompanyByRoleId" parameterType="java.lang.Integer">
+        update wkb_user set okc_flag=2 where u_id in(select u_id from wkb_orgpost where p_id=#{pId,jdbcType=INTEGER})
+    </update>
+
+    <update id="resetCompanyByUsers" parameterType="java.util.List">
+        update wkb_user set okc_flag=2 where
+        <foreach collection="list" item="item" separator="or">
+            u_id=#{item}
+        </foreach>
+    </update>
+
+    <delete id="removeUserRolesByUsers">
+        delete from wkb_orgpost where p_id=#{pId,jdbcType=INTEGER} and
+        <foreach collection="uIdList" item="item" open="(" close=")" separator="or">
+            u_id = #{item,jdbcType=INTEGER}
+        </foreach>
+    </delete>
+
+</mapper>

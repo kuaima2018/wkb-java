@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.ScheduleDefaultDao">
+
+    <insert id="insertData" parameterType="com.heima.model.ScheduleDefaultModel">
+      INSERT INTO[wkb_scheduledefault]
+           ([u_id]
+           ,[f_uid]
+           ,[creator]
+           ,[crtdatetime])
+     VALUES
+        (#{uid}
+        ,#{fuid}
+        ,#{creator}
+        ,#{crtdatetime})
+
+    </insert>
+
+    <resultMap type="com.heima.model.ScheduleDefaultModel" id="scheduledefaultmap">
+        <id column="id" property="id"/>
+        <id column="u_id" property="uid"/>
+        <result column="f_uid" property="fuid"/>
+        <result column="creator" property="creator"/>
+        <result column="crtdatetime" property="crtdatetime"/>
+
+    </resultMap>
+
+    <select id="queryForList"  parameterType="com.heima.model.ScheduleDefaultModel" resultMap="scheduledefaultmap">
+		select * from  wkb_scheduledefault   where u_id  = #{uid}
+	</select>
+
+
+	<delete id="deleteDataByPK" parameterType="com.heima.model.ScheduleDefaultModel">
+		delete from wkb_scheduledefault where id = #{id}
+	</delete>
+</mapper>

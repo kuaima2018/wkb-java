@@ -1,0 +1,829 @@
+package com.heima.controller;
+
+import com.heima.common.*;
+import com.heima.json.*;
+import com.heima.json.util.WktUserUtil;
+import com.heima.model.*;
+import com.heima.service.*;
+import com.heima.service.biz.WkbBizException;
+import com.heima.service.biz.WkbBizResult;
+import com.heima.web.service.AuthcodeManagerService;
+import com.heima.web.service.JPushService;
+import com.heima.web.service.SystemConfigure;
+import com.heima.web.util.ImageHelper;
+import com.heima.web.util.ListHelper;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * Created with (TC).
+ * User: 徐志凯
+ * Date: 14-4-8
+ * 橡果国际-系统集成部
+ * Copyright (c) 2012-2013 ACORN, Inc. All rights reserved.
+ */
+@Controller
+@RequestMapping({"/user"})
+public class UserController extends BaseController {
+
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UserController.class);
+
+    private Date invalidDate;
+
+    public UserController()
+    {
+        try{
+            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            invalidDate=simpleDateFormat.parse("1900-01-01 00:00:00");
+        }catch (Exception exp)
+        {
+
+        }
+    }
+
+    @Autowired
+    private WkbUserService wkbUserService;
+
+    @Autowired
+    private WkbSeqService wkbSeqService;
+
+    @Autowired
+    private WkbCompanyService wkbCompanyService;
+
+    @Autowired
+    private WkbFriendsService wkbFriendsService;
+
+    @Autowired
+    private WkbFriendapplyService wkbFriendapplyService;
+
+    @Autowired
+    private SystemConfigure systemConfigure;
+
+    @Autowired
+    private AuthcodeManagerService authcodeManagerService;
+
+    @RequestMapping(value = "/register", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktStatusResult register(@RequestBody JsonUserPass jsonUserPass)
+    {
+        WktStatus wktStatus=new WktStatus();
+        //检查参数
+        if(jsonUserPass==null||StringUtils.isBlank(jsonUserPass.getUserName())
+                ||StringUtils.isBlank(jsonUserPass.getPassword()))
+        {
+            wktStatus.setErrorCode(1);
+            wktStatus.setErrorMessage("未提供完整的注册信息");
+            return new WktStatusResult(wktStatus);
+        }
+        if(StringUtils.isBlank(jsonUserPass.getAuthcode()))
+        {
+            wktStatus.setErrorCode(2);
+            wktStatus.setErrorMessage("未提供验证码");
+            return new WktStatusResult(wktStatus);
+        }
+
+
+        try{
+            //wkt-验证码校验
+            wktStatus=this.authenticateAuthcode(jsonUserPass.getUserName(),jsonUserPass.getAuthcode());
+            if(wktStatus.getErrorCode().intValue()!=0)
+                return new WktStatusResult(wktStatus);
+            WkbUser wkbUser=new WkbUser();
+            wkbUser.setuId(wkbSeqService.getNewUserId());
+            wkbUser.setuIdentifier(jsonUserPass.getUserName());
+            wkbUser.setuPwd(jsonUserPass.getPassword());
+            wkbUser.setuMobile(jsonUserPass.getUserName());//目前只支持手机注册
+            wkbUser.setuOnoff((byte)1);
+            wkbUser.setuBrithday(invalidDate);
+            WkbBizResult wkbBizResult=wkbUserService.saveUser(wkbUser);
+            if(!wkbBizResult.isSucc())
+            {
+                wktStatus.setErrorCode(100);
+                wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+            }
+
+        }catch (Exception exp)
+        {
+            //TODO:wkt-捕获插入重复用户错误
+            wktStatus.setErrorCode(-1);
+            wktStatus.setErrorMessage(exp.getMessage());
+            logger.error("register user error:", exp);
+        }
+        return new WktStatusResult(wktStatus);
+    }
+
+    @RequestMapping(value = "/modify", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktResult updateUser(@RequestBody JsonUserUpdate jsonUserUpdate)
+    {
+        WktResult wktResult=new WktResult();
+        if(jsonUserUpdate==null)
+        {
+            wktResult.getStatus().setErrorCode(1);
+            wktResult.getStatus().setErrorMessage("未提供更新数据");
+            return wktResult;
+        }
+        if(jsonUserUpdate.getUserId()==null)
+        {
+            wktResult.getStatus().setErrorCode(2);
+            wktResult.getStatus().setErrorMessage("未提供更新用户");
+            return wktResult;
+        }
+        try
+        {
+            WkbUser wkbUser=wkbUserService.getUser(jsonUserUpdate.getUserId());
+            if(wkbUser==null)
+            {
+                wktResult.getStatus().setErrorCode(3);
+                wktResult.getStatus().setErrorMessage("用户不存在");
+                return wktResult;
+            }
+
+            String imageName="";
+            if(StringUtils.isNotBlank(jsonUserUpdate.getImage())&&StringUtils.isNotBlank(jsonUserUpdate.getImageName()))
+            {
+                //wkt-保存图片
+                byte[] imageData=ImageHelper.decode(jsonUserUpdate.getImage());
+                int index=jsonUserUpdate.getImageName().lastIndexOf(".");
+                imageName=wkbUser.getuId().toString();
+                if(index>0)
+                {
+                   imageName+=jsonUserUpdate.getImageName().substring(index);
+                }
+                else
+                {
+                    imageName+=".";
+                    imageName+=jsonUserUpdate.getImageName();
+                }
+                try
+                {
+                    FileOutputStream fileOutputStream=new FileOutputStream(systemConfigure.getImagePath()+imageName);
+                    fileOutputStream.write(imageData);
+                    fileOutputStream.close();
+                }catch (Exception exp)
+                {
+                    logger.error("save user image error:", exp);
+                    wktResult.getStatus().setErrorCode(100);
+                    wktResult.getStatus().setErrorMessage(exp.getMessage());
+                    return wktResult;
+                }
+                wkbUser.setImageUrl(imageName);
+            }
+            else if(StringUtils.isBlank(jsonUserUpdate.getImage())&&StringUtils.isBlank(jsonUserUpdate.getImageName()))
+            {
+
+            }
+            else
+            {
+                wktResult.getStatus().setErrorCode(4);
+                wktResult.getStatus().setErrorMessage("未提供头像完整信息");
+                return wktResult;
+            }
+            //
+            WktUserUtil.mergeFromJson(wkbUser, jsonUserUpdate);
+            WkbBizResult wkbBizResult=wkbUserService.updateUser(wkbUser);
+            if(!wkbBizResult.isSucc())
+            {
+                wktResult.getStatus().setErrorCode(200);
+                wktResult.getStatus().setErrorMessage(wkbBizResult.getDsc());
+            }
+            else
+            {
+                //
+                JsonUser jsonUser=new JsonUser();
+                WktUserUtil.convert(wkbUser,jsonUser);
+                if(StringUtils.isNotBlank(wkbUser.getImageUrl()))
+                    jsonUser.setImageUrl(systemConfigure.getImageServer()+wkbUser.getImageUrl());
+                wktResult.setResult(jsonUser);
+            }
+        }
+        catch (WkbBizException wkbExp)
+        {
+            logger.error("update user error:"+wkbExp.getCode(), wkbExp);
+            wktResult.getStatus().setErrorCode(100);
+            wktResult.getStatus().setErrorMessage(this.getBizError(wkbExp.getCode()));
+
+        }
+        catch (Exception exp)
+        {
+            wktResult.getStatus().setErrorCode(-1);
+            wktResult.getStatus().setErrorMessage(exp.getMessage());
+            logger.error("update user error:", exp);
+        }
+        return wktResult;
+
+    }
+
+    @RequestMapping(value = "/resetPassword", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktStatusResult resetPassword(@RequestBody JsonUserPass jsonUserPass)
+    {
+        WktStatus wktStatus=new WktStatus();
+        if(jsonUserPass==null||StringUtils.isBlank(jsonUserPass.getMobile())
+                ||StringUtils.isBlank(jsonUserPass.getPassword()))
+        {
+            wktStatus.setErrorCode(1);
+            wktStatus.setErrorMessage("未提供重置用户信息");
+            return new WktStatusResult(wktStatus);
+        }
+        if(StringUtils.isBlank(jsonUserPass.getAuthcode()))
+        {
+            wktStatus.setErrorCode(2);
+            wktStatus.setErrorMessage("未提供验证码");
+            return new WktStatusResult(wktStatus);
+        }
+        try
+        {
+            //wkt-验证码校验
+            wktStatus=this.authenticateAuthcode(jsonUserPass.getMobile(),jsonUserPass.getAuthcode());
+            if(wktStatus.getErrorCode().intValue()!=0)
+                return new WktStatusResult(wktStatus);
+            WkbUser wkbUser=wkbUserService.queryUserByMobile(jsonUserPass.getMobile());
+            if(wkbUser==null)
+            {
+                wktStatus.setErrorCode(3);
+                wktStatus.setErrorMessage("用户不存在");
+                return new WktStatusResult(wktStatus);
+            }
+            wkbUser.setuPwd(jsonUserPass.getPassword());
+
+            WkbBizResult wkbBizResult=wkbUserService.updateUser(wkbUser);
+            if(!wkbBizResult.isSucc())
+            {
+                wktStatus.setErrorCode(200);
+                wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+            }
+        }catch (WkbBizException wkbExp)
+        {
+            logger.error("reset password error:"+wkbExp.getCode(), wkbExp);
+            wktStatus.setErrorCode(100);
+            wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+
+        }catch (Exception exp)
+        {
+            wktStatus.setErrorCode(-1);
+            wktStatus.setErrorMessage(exp.getMessage());
+            logger.error("reset password unknown error:", exp);
+        }
+        return new WktStatusResult(wktStatus);
+    }
+
+    @RequestMapping(value = "/applyMembership", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktStatusResult applyMembership(@RequestBody JsonUserApplyQuery jsonUserApplyQuery) {
+        WktStatus wktStatus = new WktStatus();
+        if (jsonUserApplyQuery == null || jsonUserApplyQuery.getUserId() == null || jsonUserApplyQuery.getTargetId() == null) {
+            wktStatus.setErrorCode(1);
+            wktStatus.setErrorMessage("未提供参数");
+            return new WktStatusResult(wktStatus);
+        }
+
+        //避免自己加自己
+        if (jsonUserApplyQuery.getTargetId() != null & jsonUserApplyQuery.getTargetId().equals(jsonUserApplyQuery.getUserId())) {
+            return new WktStatusResult(wktStatus);
+        }
+        //个人直接推送消息提醒
+        WkbUser wkbUser = wkbUserService.getUser(jsonUserApplyQuery.getTargetId());
+        if (wkbUser == null) {
+            wktStatus.setErrorCode(2);
+            wktStatus.setErrorMessage(this.getBizError(WkbMessageEnum.USER_APPLY_NO_TARGET.getCode()));
+            return new WktStatusResult(wktStatus);
+        }
+        WkbBizResult wkbBizResult = null;
+        WkbFriendapply wkbFriendapply = new WkbFriendapply();
+        try {
+            wkbFriendapply.setAppUid(jsonUserApplyQuery.getUserId());
+            wkbFriendapply.setuId(jsonUserApplyQuery.getTargetId());
+            wkbBizResult = wkbFriendapplyService.saveFriendapply(wkbFriendapply);
+            if (!wkbBizResult.isSucc()) {
+                wktStatus.setErrorCode(3);
+                wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+            }
+        } catch (WkbBizException wkbExp) {
+            logger.error("add friend apply error:", wkbExp);
+            wktStatus.setErrorCode(-100);
+            wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+        } catch (Exception exp) {
+            logger.error("add friend apply unkown error:", exp);
+            wktStatus.setErrorCode(-200);
+            wktStatus.setErrorMessage(exp.getMessage());
+        }
+
+        if (wktStatus.getErrorCode().intValue() == 0) {
+            //推送
+            Integer sendResult = 0;
+            if (this.pushFriendApply(wkbFriendapply)) {
+                sendResult = 1;
+            }
+
+            //更新发送信息
+            try {
+                wkbBizResult = wkbFriendapplyService.saveApplySend(wkbFriendapply.getId(), sendResult);
+                if (!wkbBizResult.isSucc()) {
+                    wktStatus.setErrorCode(3);
+                    wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+                }
+            } catch (WkbBizException wkbExp) {
+                logger.error("save push result error:" + wkbExp.getCode(), wkbExp);
+                wktStatus.setErrorCode(-100);
+                wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+            } catch (Exception exp) {
+                logger.error("save push result unknown error:", exp);
+                wktStatus.setErrorCode(-200);
+                wktStatus.setErrorMessage(exp.getMessage());
+            }
+        }
+
+        return new WktStatusResult(wktStatus);
+    }
+
+
+    @RequestMapping(value = "/queryFriendApply", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktResult queryFriendApply(@RequestBody JsonTaskQuery jsonTaskQuery)
+    {
+        WktResult wktResult=new WktResult();
+        if(jsonTaskQuery==null||jsonTaskQuery.getUserId()==null)
+        {
+            wktResult.getStatus().setErrorCode(1);
+            wktResult.getStatus().setErrorMessage("未提供参数");
+            return wktResult;
+        }
+
+        WkbFriendapply wkbFriendapplyQuery=new WkbFriendapply();
+        wkbFriendapplyQuery.setuId(jsonTaskQuery.getUserId());
+
+        Integer index=jsonTaskQuery.getIndex();
+        if(index==null)
+        {
+            index=1;
+        }
+        if(index.intValue()<=0)
+        {
+            return wktResult;
+        }
+        Integer pagesize=jsonTaskQuery.getPageSize();
+        if(pagesize==null)
+        {
+            pagesize=Integer.MAX_VALUE;
+        }
+        if(pagesize.intValue()<=0)
+            return wktResult;
+
+        try{
+            List<WkbFriendapply> wkbFriendapplyList = wkbFriendapplyService.queryApplyList(wkbFriendapplyQuery, true, null, true, index, pagesize);
+            if(wkbFriendapplyList!=null&&wkbFriendapplyList.size()>0)
+            {
+                List<JsonFriendApply>  jsonFriendApplyList=new ArrayList<JsonFriendApply>();
+
+                List<Integer> userIdList=new ArrayList<Integer>();
+
+                for(WkbFriendapply wkbFriendapply:wkbFriendapplyList)
+                {
+                    JsonFriendApply jsonFriendApply=new JsonFriendApply();
+                    jsonFriendApply.setOperate(wkbFriendapply.getAppStatus()!=null?wkbFriendapply.getAppStatus().intValue():0);
+                    jsonFriendApply.setRead(wkbFriendapply.getReadStatus()!=null?wkbFriendapply.getReadStatus().intValue():0);
+                    jsonFriendApply.setUserId(wkbFriendapply.getAppUid());
+                    jsonFriendApply.setRequestId(wkbFriendapply.getId());
+                    jsonFriendApply.setRequestDate(wkbFriendapply.getAppDate());
+                    jsonFriendApply.setRemark(wkbFriendapply.getRemark());
+                    //获取名称
+                    if(!userIdList.contains(jsonFriendApply.getUserId()))
+                        userIdList.add(jsonFriendApply.getUserId());
+
+                    jsonFriendApplyList.add(jsonFriendApply);
+
+                }
+                //获取名称
+                if(userIdList.size()>0)
+                {
+                    List<WkbUser> wkbUserList=wkbUserService.queryUserList(userIdList);
+                    for(JsonFriendApply jsonFriendApply:jsonFriendApplyList)
+                    {
+                        for(WkbUser wkbUser:wkbUserList)
+                        {
+                            if(jsonFriendApply.getUserId().equals(wkbUser.getuId()))
+                            {
+                                if(StringUtils.isNotBlank(wkbUser.getuName()))
+                                    jsonFriendApply.setName(wkbUser.getuName());
+                                else
+                                    jsonFriendApply.setName(wkbUser.getuIdentifier());
+                                if(StringUtils.isNotBlank(wkbUser.getImageUrl()))
+                                    jsonFriendApply.setImageUrl(systemConfigure.getImageServer()+wkbUser.getImageUrl());
+                                break;
+                            }
+                        }
+                    }
+                }
+                wktResult.setResult(jsonFriendApplyList);
+
+            }
+        }catch (Exception exp)
+        {
+            logger.error("query friend apply error:",exp);
+            wktResult.getStatus().setErrorCode(-100);
+            wktResult.getStatus().setErrorMessage(exp.getMessage());
+        }
+        return wktResult;
+    }
+
+    @RequestMapping(value = "/handleFriendApply", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktStatusResult handleFriendApply(@RequestBody JsonUserApplyQuery jsonUserApplyQuery)
+    {
+        WktStatus wktStatus=new WktStatus();
+        if(jsonUserApplyQuery==null||jsonUserApplyQuery.getUserId()==null
+                ||jsonUserApplyQuery.getRequestId()==null)
+        {
+            wktStatus.setErrorCode(1);
+            wktStatus.setErrorMessage("未提供参数");
+            return new WktStatusResult(wktStatus);
+        }
+        if(jsonUserApplyQuery.getType()!=null&&jsonUserApplyQuery.getType().intValue()==0)
+        {
+            WkbBizResult wkbBizResult=null;
+            try{
+                wkbBizResult=wkbFriendapplyService.agreeApply(jsonUserApplyQuery.getRequestId(),jsonUserApplyQuery.getUserId(),null);
+            }catch (WkbBizException wkbExp)
+            {
+                logger.error("check Friend Apply error:"+wkbExp.getCode(), wkbExp);
+                wktStatus.setErrorCode(-100);
+                wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+            }
+            catch (Exception exp)
+            {
+                logger.error("check Friend Apply unkown error:", exp);
+                wktStatus.setErrorCode(-200);
+                wktStatus.setErrorMessage(exp.getMessage());
+            }
+            if(wkbBizResult!=null&&!wkbBizResult.isSucc())
+            {
+                wktStatus.setErrorCode(-101);
+                wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+            }
+
+            if(wktStatus.getErrorCode().intValue()!=0)
+            {
+                WkbFriendapply wkbFriendapply=wkbFriendapplyService.findWkbFriendapply(jsonUserApplyQuery.getRequestId());
+                if(wkbFriendapply!=null)
+                {
+                    if(wkbFriendsService.isWkbFriends(jsonUserApplyQuery.getUserId(),wkbFriendapply.getAppUid()))
+                    {
+                        wktStatus.setErrorCode(2);
+                        wktStatus.setErrorMessage(this.getBizError(WkbMessageEnum.USER_FRIEND_EXIST.getCode()));
+                    }
+                }
+            }
+            else
+            {
+                WkbFriendapply wkbFriendapply=wkbFriendapplyService.findWkbFriendapply(jsonUserApplyQuery.getRequestId());
+                if(wkbFriendapply!=null)
+                {
+                    logger.debug("begin push agree user message");
+                    pushFriendApplyResult(wkbFriendapply,true);
+                }
+                else
+                {
+                    logger.error("no friend apply found:"+jsonUserApplyQuery.getRequestId());
+                }
+            }
+        }
+        else
+        {
+            //不同意时，是否需要处理
+            try{
+                WkbBizResult wkbBizResult=wkbFriendapplyService.rejectApply(jsonUserApplyQuery.getRequestId(), jsonUserApplyQuery.getUserId(),null);
+                if(!wkbBizResult.isSucc())
+                {
+                    wktStatus.setErrorCode(-101);
+                    wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+                }
+            }catch (WkbBizException wkbExp)
+            {
+                logger.error("check Friend Apply error:"+wkbExp.getCode(), wkbExp);
+                wktStatus.setErrorCode(-100);
+                wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+            }
+            catch (Exception exp)
+            {
+                logger.error("check Friend Apply unkown error:", exp);
+                wktStatus.setErrorCode(-200);
+                wktStatus.setErrorMessage(exp.getMessage());
+            }
+
+            if(wktStatus.getErrorCode().intValue()==0)
+            {
+                WkbFriendapply wkbFriendapply=wkbFriendapplyService.findWkbFriendapply(jsonUserApplyQuery.getRequestId());
+                if(wkbFriendapply!=null)
+                {
+                    logger.debug("begin push reject user message");
+                    pushFriendApplyResult(wkbFriendapply,false);
+                }
+                else
+                {
+                    logger.error("no friend apply found:"+jsonUserApplyQuery.getRequestId());
+                }
+            }
+        }
+        return new WktStatusResult(wktStatus);
+    }
+
+    @RequestMapping(value = "/readFriendApply", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktStatusResult readFriendApply(@RequestBody JsonUserApplyQuery jsonUserApplyQuery)
+    {
+        WktStatus wktStatus=new WktStatus();
+        if(jsonUserApplyQuery==null||jsonUserApplyQuery.getUserId()==null/*||jsonUserApplyQuery.getRequestIds()==null*/)
+        {
+            wktStatus.setErrorCode(1);
+            wktStatus.setErrorMessage("未提供参数");
+            return new WktStatusResult(wktStatus);
+        }
+        List<Integer> idList=ListHelper.parseStr(jsonUserApplyQuery.getStrRequestIds());
+        if(idList!=null&&idList.size()>0)
+            jsonUserApplyQuery.setRequestIds(idList);
+        if(jsonUserApplyQuery.getRequestIds()==null||jsonUserApplyQuery.getRequestIds().size()==0)
+        {
+            wktStatus.setErrorCode(2);
+            wktStatus.setErrorMessage("未提供参数");
+            return new WktStatusResult(wktStatus);
+        }
+
+        try{
+            WkbBizResult wkbBizResult=wkbFriendapplyService.readApplyByIds(jsonUserApplyQuery.getUserId(),jsonUserApplyQuery.getRequestIds());
+            if(!wkbBizResult.isSucc())
+            {
+                wktStatus.setErrorCode(-101);
+                wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+            }
+        }catch (WkbBizException wkbExp)
+        {
+            logger.error("read apply error:"+wkbExp.getCode(),wkbExp);
+            wktStatus.setErrorCode(-100);
+            wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+        }
+        catch (Exception exp)
+        {
+            logger.error("read apply unknown error:",exp);
+            wktStatus.setErrorCode(-200);
+            wktStatus.setErrorMessage(exp.getMessage());
+        }
+
+        return new WktStatusResult(wktStatus);
+    }
+
+    @RequestMapping(value = "/delFriendApply", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktStatusResult deleteFriendApply(@RequestBody JsonUserApplyQuery jsonUserApplyQuery)
+    {
+        WktStatus wktStatus=new WktStatus();
+        if(jsonUserApplyQuery==null||jsonUserApplyQuery.getUserId()==null||jsonUserApplyQuery.getRequestIds()==null)
+        {
+            wktStatus.setErrorCode(1);
+            wktStatus.setErrorMessage("未提供参数");
+            return new WktStatusResult(wktStatus);
+        }
+
+        try{
+            WkbBizResult wkbBizResult=wkbFriendapplyService.removeApplyByIds(jsonUserApplyQuery.getUserId(),jsonUserApplyQuery.getRequestIds());
+            if(!wkbBizResult.isSucc())
+            {
+                wktStatus.setErrorCode(-101);
+                wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+            }
+        }catch (WkbBizException wkbExp)
+        {
+            logger.error("read apply error:"+wkbExp.getCode(),wkbExp);
+            wktStatus.setErrorCode(-100);
+            wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+        }
+        catch (Exception exp)
+        {
+            logger.error("read apply unknown error:",exp);
+            wktStatus.setErrorCode(-200);
+            wktStatus.setErrorMessage(exp.getMessage());
+        }
+
+        return new WktStatusResult(wktStatus);
+    }
+
+    @RequestMapping(value = "/setClerk", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktStatusResult setClerk(@RequestBody JsonUserClerkQuery jsonUserClerkQuery)
+    {
+        WktStatus wktStatus=new WktStatus();
+        if(jsonUserClerkQuery==null||jsonUserClerkQuery.getUserId()==null)
+        {
+            wktStatus.setErrorCode(1);
+            wktStatus.setErrorMessage("未提供参数");
+            return new WktStatusResult(wktStatus);
+        }
+
+        try{
+            WkbUser wkbUser = new WkbUser();
+            wkbUser.setuId(jsonUserClerkQuery.getUserId());
+
+            if(jsonUserClerkQuery.getClerkId()==null) {
+                //那么直接取消原先的秘书设置
+                wkbUser.setuAppsecret("");
+            }
+            else {
+                WkbUser clerkUser = wkbUserService.getUser(jsonUserClerkQuery.getClerkId());
+                if (clerkUser == null) {
+                    wktStatus.setErrorCode(2);
+                    wktStatus.setErrorMessage("秘书用户不存在");
+                    return new WktStatusResult(wktStatus);
+                }
+                wkbUser.setuAppsecret(jsonUserClerkQuery.getClerkId().toString());
+            }
+            WkbBizResult wkbBizResult = wkbUserService.updateUser(wkbUser);
+            if (!wkbBizResult.isSucc()) {
+                wktStatus.setErrorCode(-101);
+                wktStatus.setErrorMessage(this.getBizError(wkbBizResult.getCode()));
+            }
+
+        }catch (WkbBizException wkbExp)
+        {
+            logger.error("set clerk error:"+wkbExp.getCode(),wkbExp);
+            wktStatus.setErrorCode(-100);
+            wktStatus.setErrorMessage(this.getBizError(wkbExp.getCode()));
+        }
+        catch (Exception exp)
+        {
+            logger.error("set clerk unknown error:",exp);
+            wktStatus.setErrorCode(-200);
+            wktStatus.setErrorMessage(exp.getMessage());
+        }
+
+        return new WktStatusResult(wktStatus);
+    }
+
+    @RequestMapping(value = "/getClerk", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktResult getClerk(@RequestBody JsonUserClerkQuery jsonUserClerkQuery)
+    {
+        WktResult wktResult=new WktResult();
+        if(jsonUserClerkQuery==null||jsonUserClerkQuery.getUserId()==null)
+        {
+            wktResult.getStatus().setErrorCode(1);
+            wktResult.getStatus().setErrorMessage("未提供参数");
+            return wktResult;
+        }
+
+        try{
+            WkbUser wkbUser=wkbUserService.getUser(jsonUserClerkQuery.getUserId());
+            if(wkbUser!=null)
+            {
+                if(StringUtils.isNotBlank(wkbUser.getuAppsecret()))
+                {
+                    Integer clerkId=Integer.parseInt(wkbUser.getuAppsecret());
+                    WkbUser clerkUser=wkbUserService.getUser(clerkId);
+                    if(clerkUser==null)
+                    {
+                        wktResult.getStatus().setErrorCode(2);
+                        wktResult.getStatus().setErrorMessage("秘书用户不存在");
+                    }
+                    else
+                    {
+                        //设置返回信息
+                        JsonUser jsonUser=new JsonUser();
+                        WktUserUtil.convert(wkbUser,jsonUser);
+                        if(StringUtils.isNotBlank(wkbUser.getImageUrl()))
+                            jsonUser.setImageUrl(systemConfigure.getImageServer()+wkbUser.getImageUrl());
+                        wktResult.setResult(jsonUser);
+                    }
+                }
+            }
+
+        }catch (WkbBizException wkbExp)
+        {
+            logger.error("read apply error:"+wkbExp.getCode(),wkbExp);
+            wktResult.getStatus().setErrorCode(-100);
+            wktResult.getStatus().setErrorMessage(this.getBizError(wkbExp.getCode()));
+        }
+        catch (Exception exp)
+        {
+            logger.error("read apply unknown error:",exp);
+            wktResult.getStatus().setErrorCode(-200);
+            wktResult.getStatus().setErrorMessage(exp.getMessage());
+        }
+
+        return wktResult;
+    }
+
+    @RequestMapping(value = "/search", method = {RequestMethod.POST})
+    @ResponseBody
+    public WktResult search(@RequestBody JsonUserQuery jsonUserQuery)
+    {
+        WktResult wktResult=new WktResult();
+        if(jsonUserQuery==null||StringUtils.isBlank(jsonUserQuery.getValue()))
+        {
+            wktResult.getStatus().setErrorCode(1);
+            wktResult.getStatus().setErrorMessage("未提供参数");
+            return wktResult;
+        }
+        if(jsonUserQuery.getIndex()==null||jsonUserQuery.getIndex().intValue()<=0
+                ||jsonUserQuery.getPageSize()==null||jsonUserQuery.getPageSize().intValue()<=0)
+        {
+            wktResult.getStatus().setErrorCode(1);
+            wktResult.getStatus().setErrorMessage("未提供分页参数或不合法");
+            return wktResult;
+        }
+        if(jsonUserQuery.getType()==null)
+            return wktResult;
+
+        //type(1-公司名称 2-手机号 3-姓名 4-职务)
+        int startPos=(jsonUserQuery.getIndex()-1)*jsonUserQuery.getPageSize();
+        int endPos=jsonUserQuery.getPageSize();
+        List<WkbUser> wkbUserList=null;
+        if(jsonUserQuery.getType().intValue()==1)
+        {
+            wkbUserList=wkbUserService.queryFuzzyByCompanyName(jsonUserQuery.getValue(),startPos,endPos);
+        }else if(jsonUserQuery.getType().intValue()==2)
+        {
+            wkbUserList=wkbUserService.queryFuzzyByMobile(jsonUserQuery.getValue(), startPos, endPos);
+        }else if(jsonUserQuery.getType().intValue()==3)
+        {
+            wkbUserList=wkbUserService.queryFuzzyByName(jsonUserQuery.getValue(), startPos, endPos);
+        }else if(jsonUserQuery.getType().intValue()==4)
+        {
+            wkbUserList=wkbUserService.queryFuzzyByPosition(jsonUserQuery.getValue(), startPos, endPos);
+        }
+        if(wkbUserList!=null&&wkbUserList.size()>0)
+        {
+            List<JsonUser> jsonUserList=new ArrayList<JsonUser>();
+            for(WkbUser wkbUser:wkbUserList)
+            {
+                JsonUser jsonUser=new JsonUser();
+                WktUserUtil.convert(wkbUser,jsonUser);
+                if(StringUtils.isNotBlank(wkbUser.getImageUrl()))
+                    jsonUser.setImageUrl(systemConfigure.getImageServer()+wkbUser.getImageUrl());
+
+                jsonUserList.add(jsonUser);
+            }
+
+            wktResult.setResult(jsonUserList);
+        }
+
+        return wktResult;
+    }
+
+    private WktStatus authenticateAuthcode(String mobile,String authcode)
+    {
+        WktStatus wktStatus=new WktStatus();
+        int retCode=authcodeManagerService.authenticate(mobile,authcode);
+        if(retCode<0)
+        {
+            if(retCode==-1)
+            {
+                wktStatus.setErrorCode(300);
+                wktStatus.setErrorMessage("未请求或者验证码已过期");
+            }
+            else
+            {
+                wktStatus.setErrorCode(301);
+                wktStatus.setErrorMessage("验证码不正确");
+            }
+        }
+        return wktStatus;
+    }
+
+
+    @Autowired
+    private JPushService jPushService;
+
+    private boolean pushFriendApply(WkbFriendapply wkbFriendapply)
+    {
+        Map<String, Object> extra =new HashMap<String, Object>();
+        extra.put("type", 0);
+        return jPushService.pushMessage(wkbFriendapply.getuId(),"好友请求", wkbFriendapply.getAppName()+ "请求加为好友",extra);
+    }
+
+    private boolean pushFriendApplyResult(WkbFriendapply wkbFriendapply,boolean bAgree)
+    {
+        Map<String, Object> extra =new HashMap<String, Object>();
+        extra.put("type", 0);
+        String strText="";
+
+        WkbUser wkbUser=wkbUserService.getUser(wkbFriendapply.getuId());
+        if(wkbUser!=null)
+        {
+           strText+=wkbUser.getuName();
+        }
+        if(bAgree)
+        {
+            strText+="同意加为好友";
+        }
+        else
+        {
+            strText+="拒绝加为好友";
+        }
+        return jPushService.pushMessage(wkbFriendapply.getAppUid(),strText, strText,extra);
+    }
+}

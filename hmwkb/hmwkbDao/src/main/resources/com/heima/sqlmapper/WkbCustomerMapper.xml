@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbCustomerDao" >
+
+
+
+  <update id="updateCustomer" parameterType="com.heima.model.WkbCustomer" >
+    update wkb_customer
+    set customerName = #{customerName,jdbcType=VARCHAR},
+      postion = #{postion,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=VARCHAR},
+      fax = #{fax,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      groupId = #{groupId,jdbcType=INTEGER}
+    where customerId = #{customerId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertData" parameterType="com.heima.model.WkbCustomer">
+      insert into wkb_customer (userId, customerName, postion,
+      company, telephone, mobile,
+      fax, email, address,
+      groupId, createDate, createBy
+      )
+    values (#{userId,jdbcType=INTEGER},#{customerName,jdbcType=VARCHAR}, #{postion,jdbcType=VARCHAR},
+      #{company,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR},
+      #{fax,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+      #{groupId,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}
+      )
+  </insert>
+
+    <select id="getCustomer" parameterType="java.lang.Integer" resultType="com.heima.model.WkbCustomer">
+        select * from wkb_customer where customerId = #{customerId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteCustomer" >
+        delete from wkb_customer
+        where customerId = #{customerId,jdbcType=INTEGER} and userId=#{userId,jdbcType=INTEGER}
+    </delete>
+
+    <update id="updateCustomersGroup">
+        update wkb_customer set groupId=#{newGroupId,jdbcType=INTEGER} where groupId=#{orgGroupId,jdbcType=INTEGER} and userId=#{userId,jdbcType=INTEGER}
+    </update>
+
+    <select id="queryCustomersByPage" resultType="com.heima.model.WkbCustomer">
+        select * from wkb_customer
+        <where>
+            <if test="userId!=null">
+                and userId=#{userId,jdbcType=INTEGER}
+            </if>
+            <if test="groupId!=null">
+                and groupId=#{groupId,jdbcType=INTEGER}
+            </if>
+        </where>
+        <if test="orderByCol!=null">
+            order by ${orderByCol} desc
+        </if>
+        limit #{startPos}, #{endPos}
+    </select>
+</mapper>

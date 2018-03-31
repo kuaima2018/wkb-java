@@ -1,0 +1,81 @@
+package com.heima.web.service.impl;
+
+import com.cloopen.rest.sdk.CCPRestSmsSDK;
+import com.heima.service.AuthCodeService;
+import com.heima.web.service.AuthcodeManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: xuzk
+ * Date: 15-3-10
+ */
+@Service
+public class AuthcodeManagerServiceImpl implements AuthcodeManagerService {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AuthcodeManagerServiceImpl.class);
+
+    @Autowired
+    private AuthCodeService authCodeService;
+
+    @Value("${com.heima.sms.server.ip}")
+    private String serverIp;
+    @Value("${com.heima.sms.server.port}")
+    private String serverPort;
+    @Value("${com.heima.sms.account.sid}")
+    private String accountSid;
+    @Value("${com.heima.sms.account.token}")
+    private String accountToken;
+    @Value("${com.heima.sms.appid}")
+    private String appId;
+    @Value("${com.heima.sms.template}")
+    private String templateNo;
+
+    @Override
+    public void genAuthcodeAndSend(String mobile) {
+        Map<String,String> map=authCodeService.genAuthCode(mobile,4);
+        //wkt-发送验证码到手机
+        String bSucc=map.get("result");
+        if("1".equals(bSucc))
+            return;
+
+        String authCode=map.get("code");
+
+        HashMap<String, Object> result = null;
+        //初始化SDK
+        CCPRestSmsSDK restAPI = new CCPRestSmsSDK();
+        restAPI.init(serverIp, serverPort);
+        restAPI.setAccount(accountSid, accountToken);
+        restAPI.setAppId(appId);
+        result = restAPI.sendTemplateSMS(mobile, templateNo ,new String[]{authCode,"30"});
+        if("000000".equals(result.get("statusCode"))){
+            //正常返回输出data包体信息（map）
+            HashMap<String,Object> data = (HashMap<String, Object>) result.get("data");
+            Set<String> keySet = data.keySet();
+            for(String key:keySet){
+                Object object = data.get(key);
+                logger.debug(key +" = "+object);
+            }
+        }else{
+            //异常返回输出错误码和错误信息
+            String errorMsg="错误码=" + result.get("statusCode") +" 错误信息= "+result.get("statusMsg");
+
+            logger.error("send sms error:"+errorMsg);
+            throw new RuntimeException(errorMsg);
+        }
+
+        logger.debug(String.format("mobile:%s-authcode:%s",mobile,authCode));
+    }
+
+    @Override
+    public int authenticate(String mobile, String authCode) {
+        /*if("12345678900".equals(mobile))
+            return 0;*/
+        return authCodeService.authenticate(mobile,authCode);
+    }
+}

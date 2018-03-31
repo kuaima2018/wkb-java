@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Reference Manual http://logback.qos.ch/manual/index.html -->
+ 
+<configuration>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+
+             <!-- 日志输出格式 -->
+        <encoder charset="UTF-8">
+            <pattern>%d	%-6p	%l	%m	%n</pattern>
+        </encoder>
+    </appender> 
+ 
+    <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+     <Encoding>UTF-8</Encoding>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${user.home}/sales_logs/sales.%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <!--  <minIndex>1</minIndex>-->
+            <!--<maxIndex>3</maxIndex>-->
+        </rollingPolicy>
+ 
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+ 
+        <encoder>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+        </encoder>
+        
+         <layout class="ch.qos.logback.classic.PatternLayout">  
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符--> 
+            <pattern>>%d	%-6p	%l	%m	%n
+            </pattern>   
+       </layout> 
+    </appender>
+ 
+  <logger name="org.springframework">
+        <level value="WARN" />
+    </logger>
+    <logger name="org.hibernate">
+        <level value="WARN" />
+    </logger>
+    <logger name="org.hibernate.SQL">
+        <level value="INFO" />
+    </logger>
+        <logger name="org.hibernate.cache">
+        <level value="WARN" />
+    </logger>
+    	<logger name="com.chinadrtv.erp.oms.controller">
+        <level value="WARN" />
+    </logger>
+    <logger name="com.chinadrtv.erp.sales">
+        <level value="WARN" />
+    </logger>
+    <root> <!-- 定义级别为 ,INFo  -->
+        <level value="WARN" />
+        <appender-ref ref="stdout" />
+        <appender-ref ref="rollingFile" />
+    </root> 
+</configuration>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<included>
+
+
+	<!-- 存放日志文件的要路径 -->
+ 	<substitutionProperty name="MAINTAIN_LOG_HOME" value="${LOG_HOME}" />
+ 	
+    <substitutionProperty name="MAINTAIN_LOG_HOME_COMMON" value="${MAINTAIN_LOG_HOME}/${PROJECT_NAME}/paffFramework/common" />
+	<substitutionProperty name="MAINTAIN_LOG_HOME_SQL" value="${MAINTAIN_LOG_HOME}/${PROJECT_NAME}/paffFramework/sql" />
+	<substitutionProperty name="MAINTAIN_LOG_HOME_CACHE" value="${MAINTAIN_LOG_HOME}/${PROJECT_NAME}/paffFramework/cache" />
+
+	<timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss" /> 
+  
+  <!-- cache -->
+     <appender name="cacheRolling"  class="ch.qos.logback.core.rolling.RollingFileAppender"> 
+   		 <file>${MAINTAIN_LOG_HOME_CACHE}/paff-${bySecond}.txt</file> 
+   		 <rollingPolicy  class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  				<fileNamePattern>${MAINTAIN_LOG_HOME_CACHE}/paff-%d{yyyy-MM-dd}.%i.zip</fileNamePattern> 
+  		  		<maxHistory>30</maxHistory> 
+  		   		 <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				    <MaxFileSize>10MB</MaxFileSize>
+				 </TimeBasedFileNamingAndTriggeringPolicy>    
+		</rollingPolicy> 
+		
+	    <encoder> 
+	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> 
+	      
+	    </encoder> 
+  </appender> 
+  
+  
+  
+    <!-- common -->
+   <appender name="commonRolling"  class="ch.qos.logback.core.rolling.RollingFileAppender"> 
+   		 <file>${MAINTAIN_LOG_HOME_COMMON}/paff-${bySecond}.txt</file> 
+   		 <rollingPolicy  class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  				<fileNamePattern>${MAINTAIN_LOG_HOME_COMMON}/paff-%d{yyyy-MM-dd}.%i.zip</fileNamePattern> 
+  		  		<maxHistory>30</maxHistory> 
+  		   		 <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				    <MaxFileSize>10MB</MaxFileSize>
+				 </TimeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy> 
+	    <encoder> 
+	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> 
+	      
+	    </encoder> 
+  </appender> 
+  
+  
+  
+  
+  <!-- sqlRolling -->
+      <appender name="sqlRolling"  class="ch.qos.logback.core.rolling.RollingFileAppender"> 
+   		 <file>${MAINTAIN_LOG_HOME_SQL}/paff-${bySecond}.txt</file> 
+   		 <rollingPolicy  class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+  				<fileNamePattern>${MAINTAIN_LOG_HOME_SQL}/paff-%d{yyyy-MM-dd}.%i.zip</fileNamePattern> 
+  		  		<maxHistory>30</maxHistory> 
+  		   		 <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				    <MaxFileSize>10MB</MaxFileSize>
+				 </TimeBasedFileNamingAndTriggeringPolicy>    
+		</rollingPolicy> 
+		
+	    <encoder> 
+	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern> 
+	      
+	    </encoder> 
+     </appender> 
+     
+     
+     
+        
+
+     
+      <!-- cache -->
+  <logger name="paff.common" level="INFO">
+  	<appender-ref ref="commonRolling"/>
+  </logger>  
+  
+   <!-- cache -->
+  <logger name="paff.cache" level="INFO">
+  	<appender-ref ref="cacheRolling"/>
+  </logger> 
+  
+   <!--sql-->
+  <logger name="paff.sql" level="INFO">
+  	<appender-ref ref="sqlRolling"/>
+  </logger> 
+  
+  
+   
+</included>

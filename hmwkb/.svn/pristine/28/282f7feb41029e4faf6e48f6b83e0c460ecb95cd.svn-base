@@ -1,0 +1,135 @@
+package com.heima.json;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * Created with (TC).
+ * User: 徐志凯
+ * Date: 14-4-10
+ * 橡果国际-系统集成部
+ * Copyright (c) 2012-2013 ACORN, Inc. All rights reserved.
+ */
+public class JsonCompany implements Serializable {
+
+    /**
+     * 公司编号
+     */
+    private String companyId;
+
+    /**
+     * 公司名称
+     */
+    private String companyName;
+
+    /**
+     * 公司联系人
+     */
+    private String contact;
+
+    /**
+     * 公司手机
+     */
+    private String mobile;
+
+    /**
+     * 公司电话
+     */
+    private String telephone;
+
+    /**
+     * 公司传真
+     */
+    private String fax;
+
+    /**
+     * 公司邮箱
+     */
+    private String email;
+
+    /**
+     * 公司地址
+     */
+    private String address;
+
+
+    /**
+     * 公司邮编
+     */
+    private String postcode;
+
+    public String getPostcode() {
+        return postcode;
+    }
+
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFax() {
+        return fax;
+    }
+
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+}

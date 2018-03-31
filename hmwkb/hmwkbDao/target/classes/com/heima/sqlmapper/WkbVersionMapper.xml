@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbVersionDao" >
+  <insert id="insertData" parameterType="com.heima.model.WkbVersion" >
+    insert into wkb_version (schId, type,
+      userId, notation, createTime
+      )
+    values (#{schId,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},
+      #{userId,jdbcType=INTEGER}, #{notation,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+    <select id="queryByType" parameterType="string" resultType="com.heima.model.WkbVersion">
+        select * from wkb_version where appType=#{appType,jdbcType=VARCHAR} order by id desc limit 0,1
+    </select>
+
+</mapper>

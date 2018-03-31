@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hmwkb.iml" filepath="$PROJECT_DIR$/hmwkb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hmwkbDao/hmwkbDao.iml" filepath="$PROJECT_DIR$/hmwkbDao/hmwkbDao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hmwkbModel/hmwkbModel.iml" filepath="$PROJECT_DIR$/hmwkbModel/hmwkbModel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hmwkbSecurity/hmwkbSecurity.iml" filepath="$PROJECT_DIR$/hmwkbSecurity/hmwkbSecurity.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hmwkbService/hmwkbService.iml" filepath="$PROJECT_DIR$/hmwkbService/hmwkbService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hmwkbWeb/hmwkbWeb.iml" filepath="$PROJECT_DIR$/hmwkbWeb/hmwkbWeb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wkbjsonModel/wkbjsonModel.iml" filepath="$PROJECT_DIR$/wkbjsonModel/wkbjsonModel.iml" />
+    </modules>
+  </component>
+</project>

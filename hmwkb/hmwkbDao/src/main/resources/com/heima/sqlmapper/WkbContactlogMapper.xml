@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbContactLogDao" >
+
+    <insert id="insertData" parameterType="com.heima.model.WkbContactLog" >
+        insert into wkb_contactlog (customerId, userId,contactLogContent,contactLogDate)
+        values (#{customerId,jdbcType=INTEGER},#{userId,jdbcType=INTEGER}, #{contactLogContent,jdbcType=VARCHAR},#{contactLogDate,jdbcType=TIMESTAMP})
+    </insert>
+
+
+    <delete id="deleteContactLog">
+        delete from wkb_contactlog where contactLogId=#{contactLogId,jdbcType=INTEGER} and userId=#{userId,jdbcType=INTEGER}
+    </delete>
+
+    <select id="queryLogsByPage" resultType="com.heima.model.WkbContactLog">
+        select * from wkb_contactlog where customerId=#{customerId,jdbcType=INTEGER} and userId=#{userId,jdbcType=INTEGER} order by contactLogId desc
+        limit #{startPos}, #{endPos}
+    </select>
+
+</mapper>

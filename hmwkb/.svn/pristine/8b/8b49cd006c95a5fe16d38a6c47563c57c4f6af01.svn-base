@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
+       default-lazy-init="true">
+
+    <bean class="com.heima.security.service.impl.ServiceSecurityConfig">
+        <!-- 不需要授权访问的url模式，在此列表中的url，无权限限制
+          默认值为空，主要用于下面filterPatternList中的模式匹配中的例外url
+          配置数据同spring-security中的模式，可参见sales配置
+          -->
+        <property name="exceptionPatternList">
+            <list>
+                <value>/test/**</value>
+                <value>/user/resetPassword</value>
+                <value>/authcode/genAuthCode</value>
+                <value>/user/register</value>
+                <value>/static/**</value>
+                <value>/task/sendTask</value>
+                <!--<value>/free/**</value>-->
+                <!--<value>/message/**</value>-->
+            </list>
+        </property>
+
+        <!-- 需要授权访问的url模式，不在此列表中的url，无权限限制
+          默认值为/**，也就是所有访问都需要验证
+          配置数据同spring-security中的模式，可参见sales配置
+          -->
+        <property name="filterPatternList">
+            <list>
+                <value>/**</value>
+            </list>
+        </property>
+
+        <!--登录页面url
+            默认值为/login*
+        -->
+        <property name="loginPattern" value="/user/login*"></property>
+
+        <!--退出页面url
+            默认值为/logout*
+        -->
+        <property name="logoutPattern" value="/user/logout*"></property>
+
+        <!-- url模式匹配算法类，支持spring内置的所有类型
+            ant（ANT），regex（REGEX），el（EL）
+            默认值为ANT
+        -->
+        <!--<property name="matcherMethod" value="ANT"></property>-->
+
+        <!-- 授权时，token存放的字段名称
+            默认值为“token”
+            可指定重载
+        -->
+        <!--<property name="tokenName" value="sessionid"></property>-->
+    </bean>
+
+</beans>

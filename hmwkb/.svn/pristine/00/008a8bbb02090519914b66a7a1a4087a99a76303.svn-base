@@ -1,0 +1,30 @@
+#session_memcache_server
+SESSION_MEMCACHE_SERVER=127.0.0.1:11211
+com.heima.service.impl.WkbFriendapplyServiceImpl.applyInterval=5
+
+#image server info
+com.heima.image.server=http://127.0.0.1:8080/static/
+com.heima.image.path=d\:\\ESB\\
+
+#sms server info
+com.heima.sms.server.ip=sandboxapp.cloopen.com
+com.heima.sms.server.port=8883
+com.heima.sms.account.sid=8a48b5514bfd9130014c018e2fd80282
+com.heima.sms.account.token=1536c4a05a9f479aa6da04681fce4c9e
+com.heima.sms.appid=aaf98f894bfd8efd014c018e675d01eb
+com.heima.sms.template=1
+
+
+#jpush server info
+com.heima.jpush.masterSecret=53ff107f97ece6a04bf9263d
+com.heima.jpush.appKey=55fefe1603c3133f5cc3df34
+
+
+#track
+com.heima.track.count=30
+
+#test
+
+
+
+

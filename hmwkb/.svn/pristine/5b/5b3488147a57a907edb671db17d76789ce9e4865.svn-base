@@ -1,0 +1,16 @@
+package com.heima.service;
+
+import com.heima.model.WkbFree;
+
+import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: xuzk
+ * Date: 15-3-13
+ */
+public interface WkbFreeService {
+    List<WkbFree> queryFreeByUser(Integer userId, Integer index,Integer pageSize);
+    int deleteFreeByUser(Integer id,Integer userId);
+    void saveFree(WkbFree wkbFree);
+}

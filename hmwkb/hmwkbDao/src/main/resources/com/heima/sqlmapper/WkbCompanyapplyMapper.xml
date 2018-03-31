@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbCompanyapplyDao" >
+
+  <insert id="insertData" parameterType="com.heima.model.WkbCompanyapply" useGeneratedKeys="true" keyProperty="id">
+    insert into wkb_companyapply (c_id, c_name, c_contact, c_mobile, c_tel, c_fax, c_email, c_addr, c_zipcode, creator, crtdatetime, status)
+    values (#{cId,jdbcType=VARCHAR}, #{cName,jdbcType=VARCHAR},
+      #{cContact,jdbcType=VARCHAR}, #{cMobile,jdbcType=VARCHAR}, #{cTel,jdbcType=VARCHAR}, 
+      #{cFax,jdbcType=VARCHAR}, #{cEmail,jdbcType=VARCHAR}, #{cAddr,jdbcType=VARCHAR}, 
+      #{cZipcode,jdbcType=VARCHAR}, #{creator,jdbcType=INTEGER}, #{crtdatetime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=CHAR})
+  </insert>
+
+
+  <select id="findCompanyByName" parameterType="com.heima.model.WkbCompanyapply" resultType="com.heima.model.WkbCompanyapply">
+      select * from wkb_companyapply
+      <where>
+          <if test="cId != null">
+              c_id=#{cId,jdbcType=VARCHAR}
+          </if>
+          <if test="cName != null">
+             and c_name=#{cName,jdbcType=VARCHAR}
+          </if>
+      </where>
+      and status !='2'
+  </select>
+
+    <!--<select id="queryCompanyapply" parameterType="com.heima.dto.WkbCompanyapplyQueryDto" resultType="com.heima.model.WkbCompanyapply">
+        select * from (select a.*,ROW_X_NUMBER() OVER( order by id desc) as rank from  wkb_companyapply a
+        <where>
+            <if test="cId != null">
+                c_id=#{cId,jdbcType=VARCHAR}
+            </if>
+            <if test="cName != null">
+                and c_name=#{cName,jdbcType=VARCHAR}
+            </if>
+            <if test="cContact != null">
+                and c_contact=#{cContact,jdbcType=VARCHAR}
+            </if>
+            <if test="cMobile != null">
+                and c_mobile=#{cMobile,jdbcType=VARCHAR}
+            </if>
+            <if test="cTel != null">
+                and c_tel=#{cTel,jdbcType=VARCHAR}
+            </if>
+            <if test="cFax != null">
+                and c_fax=#{cFax,jdbcType=VARCHAR}
+            </if>
+            <if test="cEmail != null">
+                and c_email=#{cEmail,jdbcType=VARCHAR}
+            </if>
+            <if test="cAddr != null">
+                and c_addr=#{cAddr,jdbcType=VARCHAR}
+            </if>
+            <if test="cZipcode != null">
+                and c_zipcode=#{cZipcode,jdbcType=VARCHAR}
+            </if>
+            <if test="creator != null">
+                and creator=#{creator,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status=#{status,jdbcType=CHAR}
+            </if>
+            <if test="status == null">
+                and status!=2
+            </if>
+            <if test="begincrttime != null">
+             <![CDATA[    and crtdatetime >= #{begincrttime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="endcrttime != null">
+             <![CDATA[   and crtdatetime <= #{endcrttime,jdbcType=TIMESTAMP}]]>
+            </if>
+        </where>) as tt where tt.rank between #{startPos} and #{endPos}
+    </select> -->
+
+    <select id="queryCompanyapply" parameterType="com.heima.dto.WkbCompanyapplyQueryDto" resultType="com.heima.model.WkbCompanyapply">
+        select a.* from  wkb_companyapply a
+        <where>
+            <if test="cId != null">
+                c_id=#{cId,jdbcType=VARCHAR}
+            </if>
+            <if test="cName != null">
+                and c_name=#{cName,jdbcType=VARCHAR}
+            </if>
+            <if test="cContact != null">
+                and c_contact=#{cContact,jdbcType=VARCHAR}
+            </if>
+            <if test="cMobile != null">
+                and c_mobile=#{cMobile,jdbcType=VARCHAR}
+            </if>
+            <if test="cTel != null">
+                and c_tel=#{cTel,jdbcType=VARCHAR}
+            </if>
+            <if test="cFax != null">
+                and c_fax=#{cFax,jdbcType=VARCHAR}
+            </if>
+            <if test="cEmail != null">
+                and c_email=#{cEmail,jdbcType=VARCHAR}
+            </if>
+            <if test="cAddr != null">
+                and c_addr=#{cAddr,jdbcType=VARCHAR}
+            </if>
+            <if test="cZipcode != null">
+                and c_zipcode=#{cZipcode,jdbcType=VARCHAR}
+            </if>
+            <if test="creator != null">
+                and creator=#{creator,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status=#{status,jdbcType=CHAR}
+            </if>
+            <if test="status == null">
+                and status!=2
+            </if>
+            <if test="begincrttime != null">
+                <![CDATA[    and crtdatetime >= #{begincrttime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="endcrttime != null">
+                <![CDATA[   and crtdatetime <= #{endcrttime,jdbcType=TIMESTAMP}]]>
+            </if>
+        </where> order by id desc limit #{startPos},#{endPos}
+    </select>
+
+
+    <select id="queryCountCompanyapply" parameterType="com.heima.dto.WkbCompanyapplyQueryDto" resultType="java.lang.Integer">
+        select count(id) from  wkb_companyapply
+        <where>
+            <if test="cId != null">
+                c_id=#{cId,jdbcType=VARCHAR}
+            </if>
+            <if test="cName != null">
+                and c_name=#{cName,jdbcType=VARCHAR}
+            </if>
+            <if test="cContact != null">
+                and c_contact=#{cContact,jdbcType=VARCHAR}
+            </if>
+            <if test="cMobile != null">
+                and c_mobile=#{cMobile,jdbcType=VARCHAR}
+            </if>
+            <if test="cTel != null">
+                and c_tel=#{cTel,jdbcType=VARCHAR}
+            </if>
+            <if test="cFax != null">
+                and c_fax=#{cFax,jdbcType=VARCHAR}
+            </if>
+            <if test="cEmail != null">
+                and c_email=#{cEmail,jdbcType=VARCHAR}
+            </if>
+            <if test="cAddr != null">
+                and c_addr=#{cAddr,jdbcType=VARCHAR}
+            </if>
+            <if test="cZipcode != null">
+                and c_zipcode=#{cZipcode,jdbcType=VARCHAR}
+            </if>
+            <if test="creator != null">
+                and creator=#{creator,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status=#{status,jdbcType=CHAR}
+            </if>
+            <if test="status == null">
+                and status!=2
+            </if>
+            <if test="begincrttime != null">
+                <![CDATA[    and crtdatetime >= #{begincrttime,jdbcType=TIMESTAMP} ]]>
+            </if>
+            <if test="endcrttime != null">
+                <![CDATA[   and crtdatetime <= #{endcrttime,jdbcType=TIMESTAMP}]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="getCompanyapply" parameterType="java.lang.Integer" resultType="com.heima.model.WkbCompanyapply">
+        select * from  wkb_companyapply where id=#{companyapplyId}
+    </select>
+
+    <update id="updateCompanyapplyStatus">
+       update wkb_companyapply set status=#{newStatus,jdbcType=CHAR} where id=#{companyapplyId} and  status=#{orgStatus,jdbcType=CHAR}
+    </update>
+</mapper>

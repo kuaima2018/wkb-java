@@ -1,0 +1,61 @@
+package com.heima.service.impl;
+
+import com.heima.constant.SeqNames;
+import com.heima.dao.WkbSeqDao;
+import com.heima.service.WkbSeqService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * Created with (TC).
+ * User: 徐志凯
+ * Date: 14-4-8
+ * 橡果国际-系统集成部
+ * Copyright (c) 2012-2013 ACORN, Inc. All rights reserved.
+ */
+@Service
+public class WkbSeqServiceImpl implements WkbSeqService {
+
+    @Autowired
+    private WkbSeqDao wkbSeqDao;
+
+    @Override
+    public int getNewUserId() {
+        return wkbSeqDao.getNextVal(SeqNames.UserSeq);
+    }
+
+    @Override
+    public int getSendNo() {
+        return wkbSeqDao.getNextVal(SeqNames.PushSeq);
+    }
+
+    @Override
+    public int getVoiceNo() {
+        return wkbSeqDao.getNextVal(SeqNames.VoiceSeq);
+    }
+
+    @Override
+    public int getMessageGroupId() {
+        return wkbSeqDao.getNextVal(SeqNames.MessageGroupSeq);
+    }
+
+    @Override
+    public int getOrganizationId() {
+        return wkbSeqDao.getNextVal(SeqNames.OrganizationSeq);
+    }
+
+    @Override
+    public int getRoleId() {
+        return wkbSeqDao.getNextVal(SeqNames.RoleSeq);
+    }
+
+    @Override
+    public int getCompanyId() {
+        return wkbSeqDao.getNextVal(SeqNames.CompanySeq);
+    }
+
+    @Override
+    public int getCusGroupId() {
+        return wkbSeqDao.getNextVal(SeqNames.CusGroupSeq);
+    }
+}

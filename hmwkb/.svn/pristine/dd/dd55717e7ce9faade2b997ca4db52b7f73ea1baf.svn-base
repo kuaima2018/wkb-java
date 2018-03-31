@@ -1,0 +1,78 @@
+package com.heima.json;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: xuzk
+ * Date: 15-3-13
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class JsonTrackQuery implements Serializable {
+    private String token;
+    private Integer userId;
+    private String mlalo;
+    private String date;
+    private Integer targetId;
+    private List<Integer> targetIds;
+    private String strTargetIds;
+
+    public String getMlalo() {
+        return mlalo;
+    }
+
+    public void setMlalo(String mlalo) {
+        this.mlalo = mlalo;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public Integer getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Integer targetId) {
+        this.targetId = targetId;
+    }
+
+    public List<Integer> getTargetIds() {
+        return targetIds;
+    }
+
+    public void setTargetIds(List<Integer> targetIds) {
+        this.targetIds = targetIds;
+    }
+
+    public String getStrTargetIds() {
+        return strTargetIds;
+    }
+
+    public void setStrTargetIds(String strTargetIds) {
+        this.strTargetIds = strTargetIds;
+    }
+}

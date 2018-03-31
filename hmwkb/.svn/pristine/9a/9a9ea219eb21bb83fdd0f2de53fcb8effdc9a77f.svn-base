@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbPostrightDao" >
+  <resultMap id="BaseResultMap" type="com.heima.model.WkbPostright" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="c_id" property="cId" jdbcType="VARCHAR" />
+    <result column="o_id" property="oId" jdbcType="INTEGER" />
+    <result column="p_id" property="pId" jdbcType="INTEGER" />
+    <result column="p_name" property="pName" jdbcType="VARCHAR" />
+    <result column="p_right" property="pRight" jdbcType="INTEGER" />
+    <result column="creator" property="creator" jdbcType="VARCHAR" />
+    <result column="crtdatetime" property="crtdatetime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, c_id, o_id, p_id, p_name, p_right, creator, crtdatetime
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.heima.model.WkbPostright" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from wkb_postright
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wkb_postright
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wkb_postright
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.heima.model.WkbPostright" >
+    delete from wkb_postright
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.heima.model.WkbPostright" >
+    insert into wkb_postright
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="cId != null" >
+        c_id,
+      </if>
+      <if test="oId != null" >
+        o_id,
+      </if>
+      <if test="pId != null" >
+        p_id,
+      </if>
+      <if test="pName != null" >
+        p_name,
+      </if>
+      <if test="pRight != null" >
+        p_right,
+      </if>
+      <if test="creator != null" >
+        creator,
+      </if>
+      <if test="crtdatetime != null" >
+        crtdatetime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cId != null" >
+        #{cId,jdbcType=VARCHAR},
+      </if>
+      <if test="oId != null" >
+        #{oId,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="pName != null" >
+        #{pName,jdbcType=VARCHAR},
+      </if>
+      <if test="pRight != null" >
+        #{pRight,jdbcType=INTEGER},
+      </if>
+      <if test="creator != null" >
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="crtdatetime != null" >
+        #{crtdatetime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.heima.model.WkbPostright" resultType="java.lang.Integer" >
+    select count(*) from wkb_postright
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update wkb_postright
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.cId != null" >
+        c_id = #{record.cId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.oId != null" >
+        o_id = #{record.oId,jdbcType=INTEGER},
+      </if>
+      <if test="record.pId != null" >
+        p_id = #{record.pId,jdbcType=INTEGER},
+      </if>
+      <if test="record.pName != null" >
+        p_name = #{record.pName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pRight != null" >
+        p_right = #{record.pRight,jdbcType=INTEGER},
+      </if>
+      <if test="record.creator != null" >
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crtdatetime != null" >
+        crtdatetime = #{record.crtdatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update wkb_postright
+    set id = #{record.id,jdbcType=INTEGER},
+      c_id = #{record.cId,jdbcType=VARCHAR},
+      o_id = #{record.oId,jdbcType=INTEGER},
+      p_id = #{record.pId,jdbcType=INTEGER},
+      p_name = #{record.pName,jdbcType=VARCHAR},
+      p_right = #{record.pRight,jdbcType=INTEGER},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      crtdatetime = #{record.crtdatetime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.heima.model.WkbPostright" >
+    update wkb_postright
+    <set >
+      <if test="cId != null" >
+        c_id = #{cId,jdbcType=VARCHAR},
+      </if>
+      <if test="oId != null" >
+        o_id = #{oId,jdbcType=INTEGER},
+      </if>
+      <if test="pId != null" >
+        p_id = #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="pName != null" >
+        p_name = #{pName,jdbcType=VARCHAR},
+      </if>
+      <if test="pRight != null" >
+        p_right = #{pRight,jdbcType=INTEGER},
+      </if>
+      <if test="creator != null" >
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="crtdatetime != null" >
+        crtdatetime = #{crtdatetime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.heima.model.WkbPostright" >
+    update wkb_postright
+    set c_id = #{cId,jdbcType=VARCHAR},
+      o_id = #{oId,jdbcType=INTEGER},
+      p_id = #{pId,jdbcType=INTEGER},
+      p_name = #{pName,jdbcType=VARCHAR},
+      p_right = #{pRight,jdbcType=INTEGER},
+      creator = #{creator,jdbcType=VARCHAR},
+      crtdatetime = #{crtdatetime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="getAllRigthByCompany" parameterType="java.lang.String" resultType="com.heima.model.WkbPostright">
+        select * from wkb_postright where o_id in(select distinct id from wkb_organization where c_id = #{cId,jdbcType=VARCHAR})
+    </select>
+
+    <select id="getAllRightByOrg" parameterType="java.lang.Integer" resultType="com.heima.model.WkbPostright">
+        select * from wkb_postright where o_id = #{oId,jdbcType=INTEGER} order by id
+    </select>
+
+    <insert id="insertData" parameterType="com.heima.model.WkbPostright">
+    insert into wkb_postright (id,o_id,p_id, p_name, p_right, creator, crtdatetime)
+    values (#{id,jdbcType=INTEGER},#{oId,jdbcType=INTEGER}, #{pId,jdbcType=INTEGER}, #{pName,jdbcType=VARCHAR}, #{pRight,jdbcType=INTEGER},
+      #{creator,jdbcType=VARCHAR}, #{crtdatetime,jdbcType=TIMESTAMP})
+  </insert>
+
+    <delete id="deleteRightById" parameterType="java.lang.Integer" >
+        delete from wkb_postright where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="getRoleById" parameterType="java.lang.Integer" resultType="com.heima.model.WkbPostright">
+        select * from wkb_postright where id = #{roleId,jdbcType=INTEGER}
+    </select>
+
+    <update id="updatePostright" parameterType="com.heima.model.WkbPostright" >
+        update wkb_postright
+        <set >
+            <if test="oId != null" >
+                o_id = #{oId,jdbcType=INTEGER},
+            </if>
+            <if test="pId != null" >
+                p_id = #{pId,jdbcType=INTEGER},
+            </if>
+            <if test="pName != null" >
+                p_name = #{pName,jdbcType=VARCHAR},
+            </if>
+            <if test="pRight != null" >
+                p_right = #{pRight,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="getCompanyRoleByRoleId" resultType="com.heima.model.WkbPostright">
+        select * from wkb_postright a,wkb_organization b where a.p_id=#{pId,jdbcType=INTEGER} and a.o_id=b.id and b.c_id=#{cId,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

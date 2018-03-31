@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.WkbFreeDao">
+
+    <insert id="insertData" parameterType="com.heima.model.WkbFree">
+        insert into wkb_free (userId, date,createdate, amount,remark)
+        values (#{userId,jdbcType=INTEGER}, #{date,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}, #{amount,jdbcType=DECIMAL},#{remark,jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="deleteFreeByUser">
+        delete from wkb_free where id=#{id} and userId=#{userId}
+    </delete>
+
+
+    <select id="queryFreeByUser" resultType="com.heima.model.WkbFree">
+        select a.* from wkb_free a where userId = #{userId} order by a.id desc limit #{index},#{pageSize}
+    </select>
+
+
+
+
+</mapper>

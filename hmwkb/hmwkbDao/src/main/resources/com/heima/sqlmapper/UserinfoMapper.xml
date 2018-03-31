@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.heima.dao.UserinfoDao">
+
+    <resultMap type="com.heima.model.UserinfoModel" id="userinfoadd">
+        <id column="u_id" property="uid"/>
+        <result column="u_name" property="uname"/>
+        <result column="u_pwd" property="upwd"/>
+        <result column="u_sex" property="usex"/>
+        <result column="u_brithday" property="ubrithday"/>
+        <result column="u_title" property="utitle"/>
+        <result column="u_mobile" property="umobile"/>
+        <result column="u_tel" property="utel"/>
+        <result column="u_email" property="uemail"/>
+        <result column="u_addr" property="uaddr"/>
+        <result column="u_zipode" property="uzipode"/>
+        <result column="creator" property="creator"/>
+        <result column="crtdatetime" property="crtdatetime"/>
+    </resultMap>
+
+    <insert id="insertData" parameterType="com.heima.model.UserinfoModel" >
+        insert into wkb.wkb_user(u_id,u_name,u_pwd,u_sex,u_brithday,u_title,u_mobile,u_tel,u_fax,u_email,u_addr,
+          u_zipcode,creator,crtdatetime) values (#{uid},#{uname},#{upwd},#{usex},#{ubrithday},#{utitle},#{umobile},
+          #{utel},#{ufax},#{uemail},#{uaddr},#{uzipcode},#{creator},#{crtdatetime});
+
+    </insert>
+
+</mapper>

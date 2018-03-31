@@ -1,0 +1,157 @@
+package com.heima.service.impl;
+
+import com.heima.common.WkbMessageEnum;
+import com.heima.dao.WkbCompanyDao;
+import com.heima.dto.WkbCompanyapplyQueryDto;
+import com.heima.model.WkbCompany;
+import com.heima.model.WkbCompanyapply;
+import com.heima.model.WkbUser;
+import com.heima.service.*;
+import com.heima.service.biz.WkbBizException;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Created with (TC).
+ * User: 徐志凯
+ * Date: 14-4-10
+ * 橡果国际-系统集成部
+ * Copyright (c) 2012-2013 ACORN, Inc. All rights reserved.
+ */
+@Service
+public class WkbCompanyServiceImpl implements WkbCompanyService {
+    @Autowired
+    private WkbCompanyDao wkbCompanyDao;
+
+    @Autowired
+    private WkbCompanyapplyService wkbCompanyapplyService;
+
+    @Autowired
+    private WkbSeqService wkbSeqService;
+
+    @Autowired
+    private UserRoleService userRoleService;
+
+    @Autowired
+    private WkbUserService wkbUserService;
+
+    @Override
+    public WkbCompany findCompany(String companyId) {
+        if(StringUtils.isNotBlank(companyId))
+            return wkbCompanyDao.getCompany(companyId);
+        return null;
+    }
+
+    @Override
+    public List<WkbCompany> getAllCompanys() {
+        return wkbCompanyDao.getAllCompanys();
+    }
+
+    @Override
+    public List<WkbCompany> queryPageCompany(WkbCompanyapplyQueryDto wkbCompanyapplyQueryDto) {
+        //mysql
+        Integer startPos=wkbCompanyapplyQueryDto.getStartPos()-1;
+        Integer size= wkbCompanyapplyQueryDto.getEndPos()-startPos;
+        wkbCompanyapplyQueryDto.setStartPos(startPos);
+        wkbCompanyapplyQueryDto.setEndPos(size);
+        return wkbCompanyDao.queryPageCompany(wkbCompanyapplyQueryDto);
+    }
+
+    @Override
+    public Integer queryCountCompany(WkbCompanyapplyQueryDto wkbCompanyapplyQueryDto) {
+        return wkbCompanyDao.queryCountCompany(wkbCompanyapplyQueryDto);
+    }
+
+    @Override
+    public void addCompanyFromApply(Integer companyApplyId,Integer uId) {
+        WkbCompanyapply wkbCompanyapply=wkbCompanyapplyService.getCompanyapply(companyApplyId);
+        if(wkbCompanyapply==null)
+        {
+            throw new WkbBizException(WkbMessageEnum.COMPANY_APPLY_NO_EXIST.getCode(),"");
+        }
+        if(!"0".equals(wkbCompanyapply.getStatus()))
+        {
+            throw new WkbBizException(WkbMessageEnum.COMPANY_APPLY_HANDLED.getCode(),"");
+        }
+
+        List<WkbCompany> wkbCompanyList=wkbCompanyDao.queryCompanysByName(wkbCompanyapply.getcName());
+        if(wkbCompanyList!=null&&wkbCompanyList.size()>0)
+        {
+            throw new WkbBizException(WkbMessageEnum.COMPANY_NAME_EXIST.getCode(),"");
+        }
+
+        WkbCompany wkbCompany=new WkbCompany();
+        BeanUtils.copyProperties(wkbCompanyapply, wkbCompany, new String[]{"creator"});
+        wkbCompany.setcId(String.valueOf(wkbSeqService.getNewUserId()));
+        wkbCompany.setId(null);
+        wkbCompany.setCreator(uId.toString());
+        wkbCompany.setCrtdatetime(new Date());
+
+        wkbCompanyDao.insertData(wkbCompany);
+
+        if(!wkbCompanyapplyService.agreeCompanyapply(companyApplyId))
+        {
+            throw new WkbBizException(WkbMessageEnum.COMPANY_APPLY_HANDLED.getCode(),"");
+        }
+    }
+
+    @Override
+    public void updateCompany(WkbCompany wkbCompany) {
+        if(wkbCompany.getUpdatetime()==null)
+            wkbCompany.setUpdatetime(new Date());
+        int count=wkbCompanyDao.updateData(wkbCompany);
+        if(count!=1)
+        {
+            wkbCompany=wkbCompanyDao.getCompany(wkbCompany.getcId());
+            if(wkbCompany==null)
+            {
+                throw new RuntimeException("公司不存在:"+wkbCompany.getcId());
+            }
+        }
+    }
+
+    @Override
+    public WkbCompany addCompany(WkbCompany wkbCompany, WkbUser currentUser) {
+        if(currentUser!=null)
+        {
+            if(StringUtils.isNotBlank(currentUser.getcId()))
+            {
+                //删除原公司角色
+                userRoleService.removeCompanyUsers(currentUser.getcId(),currentUser.getuId());
+
+            }
+            //新增公司
+            if(StringUtils.isBlank(wkbCompany.getCreator()))
+            {
+                wkbCompany.setCreator(String.valueOf(currentUser.getcId()));
+            }
+            wkbCompany.setCrtdatetime(new Date());
+            wkbCompany.setUpdater(wkbCompany.getCreator());
+            wkbCompany.setUpdatetime(wkbCompany.getCrtdatetime());
+
+            wkbCompany.setcId(String.valueOf(wkbSeqService.getCompanyId()));
+            this.wkbCompanyDao.insertData(wkbCompany);
+            //设置成新公司的管理员
+            currentUser.setcId(wkbCompany.getcId());
+            currentUser.setOkcFlag((byte)0);
+            currentUser.setuCompany(wkbCompany.getcName());
+            if(currentUser.getuAdmin()==null||currentUser.getuAdmin().intValue()!=2)
+            {
+                currentUser.setuAdmin((byte)1);//设置成公司管理员
+            }
+            wkbUserService.updateUser(currentUser);
+            return wkbCompany;
+        }
+        return null;
+    }
+
+    @Override
+    public List<WkbCompany> findCompanyByName(String name) {
+        return wkbCompanyDao.queryCompanysByName(name);
+    }
+}

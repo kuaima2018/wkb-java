@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.heima.dao.WkbScheduleDao" >
+    <insert id="insertData" parameterType="com.heima.model.WkbSchedule" useGeneratedKeys="true" keyProperty="id">
+        insert into wkb_schedule (userId, scheduleDate,schedule,
+        scheduleNotation, scheduleNotationId, scheduleNotationTime,
+        daily,dailyNotation, dailyNotationId, dailyNotationTime,
+        remind, remindTime, creator, createTime, updateTime)
+        values ( #{userId,jdbcType=INTEGER}, #{scheduleDate,jdbcType=TIMESTAMP},#{schedule,jdbcType=VARCHAR},
+        #{scheduleNotation,jdbcType=VARCHAR}, #{scheduleNotationId,jdbcType=INTEGER}, #{scheduleNotationTime,jdbcType=TIMESTAMP},
+        #{daily,jdbcType=VARCHAR},#{dailyNotation,jdbcType=VARCHAR}, #{dailyNotationId,jdbcType=INTEGER}, #{dailyNotationTime,jdbcType=TIMESTAMP},
+        #{remind,jdbcType=INTEGER}, #{remindTime,jdbcType=TIMESTAMP}, #{creator,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateSchedule" parameterType="com.heima.model.WkbSchedule" >
+        update wkb_schedule
+        <set >
+            <if test="userId != null" >
+                userId = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="scheduleDate != null" >
+                scheduleDate = #{scheduleDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="schedule != null" >
+                schedule = #{schedule,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleNotation != null" >
+                scheduleNotation = #{scheduleNotation,jdbcType=VARCHAR},
+            </if>
+            <if test="scheduleNotationId != null" >
+                scheduleNotationId = #{scheduleNotationId,jdbcType=INTEGER},
+            </if>
+            <if test="scheduleNotationTime != null" >
+                scheduleNotationTime = #{scheduleNotationTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="daily != null" >
+                daily = #{daily,jdbcType=VARCHAR},
+            </if>
+            <if test="dailyNotation != null" >
+                dailyNotation = #{dailyNotation,jdbcType=VARCHAR},
+            </if>
+            <if test="dailyNotationId != null" >
+                dailyNotationId = #{dailyNotationId,jdbcType=INTEGER},
+            </if>
+            <if test="dailyNotationTime != null" >
+                dailyNotationTime = #{dailyNotationTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remind != null" >
+                remind = #{remind,jdbcType=INTEGER},
+            </if>
+            <if test="remindTime != null" >
+                remindTime = #{remindTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null" >
+                updateTime = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="querySchedule" resultType="com.heima.model.WkbSchedule">
+        select * from wkb_schedule where userId = #{userId,jdbcType=INTEGER}
+        and <![CDATA[ scheduleDate>=#{beginDate,jdbcType=TIMESTAMP} and  scheduleDate<=#{endDate,jdbcType=TIMESTAMP} ]]>
+        order by scheduleDate
+    </select>
+
+
+    <select id="queryScheduleRemind" resultType="com.heima.model.WkbSchedule">
+        select * from wkb_schedule where userId = #{userId,jdbcType=INTEGER} and remind=1
+        <if test="beginDate != null" >
+          and <![CDATA[ scheduleDate>=#{beginDate,jdbcType=TIMESTAMP} ]]>
+        </if>
+        <if test="beginDate != null" >
+            and <![CDATA[ scheduleDate<=#{endDate,jdbcType=TIMESTAMP}]]>
+        </if>
+        and <![CDATA[ remindTime>=#{beginRemindDate,jdbcType=TIMESTAMP} and  remindTime<=#{endRemindDate,jdbcType=TIMESTAMP} ]]>
+        order by remindTime
+    </select>
+</mapper>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heima.dao.WkbSeqDao">
+
+    <select id="getNextVal" parameterType="java.lang.String" resultType="java.lang.Integer">
+        update wkb_seq set id_seq=id_seq+1 where id_name=#{seqName};
+        select id_seq from wkb_seq where id_name=#{seqName};
+    </select>
+
+</mapper>
