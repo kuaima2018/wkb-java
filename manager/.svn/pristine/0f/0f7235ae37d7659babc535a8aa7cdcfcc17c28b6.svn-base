@@ -1,0 +1,80 @@
+package com.heima.service.impl;
+
+import com.heima.model.WkbUser;
+import com.heima.service.WkbUserService;
+import com.heima.util.MD5Utils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created with (TC).
+ * User: 徐志凯
+ * Date: 14-5-2
+ * 橡果国际-系统集成部
+ * Copyright (c) 2012-2013 ACORN, Inc. All rights reserved.
+ */
+public class WkbAuthenticationProviderImpl implements AuthenticationProvider {
+    @Autowired
+    private WkbUserService wkbUserService;
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) authentication;
+        String userName=auth.getName();
+        String password=(String)auth.getCredentials();
+        /*Integer uId=null;
+        try{
+           uId=Integer.parseInt(userName);
+        }catch (Exception exp)
+        {
+            throw new AuthenticationServiceException("用户编号输入格式不正确");
+        }*/
+        if(StringUtils.isBlank(password))
+        {
+            throw new AuthenticationServiceException("密码为空");
+        }
+
+        WkbUser wkbUser= wkbUserService.queryUserByIdentifier(userName);
+        if(wkbUser!=null)
+        {
+            String formatPwd= MD5Utils.getMd5String(password);
+            if(wkbUser.getuPwd().equals(formatPwd))
+            {
+                List<GrantedAuthority> grantedAuthoritiesList = new ArrayList<GrantedAuthority>();
+                if(wkbUser.getuAdmin()!=null&&wkbUser.getuAdmin().intValue()==1)
+                {
+                    grantedAuthoritiesList.add(new SimpleGrantedAuthority("wkbAdmin"));
+                }
+                else if(wkbUser.getuAdmin()!=null&&wkbUser.getuAdmin().intValue()==2)
+                {
+                    grantedAuthoritiesList.add(new SimpleGrantedAuthority("wkbSuperAdmin"));
+                }
+                return new UsernamePasswordAuthenticationToken(wkbUser, null, grantedAuthoritiesList);
+            }
+            else
+            {
+                throw new AuthenticationServiceException("密码不正确");
+            }
+        }
+        else
+        {
+            throw new AuthenticationServiceException("用户不存在");
+        }
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+    }
+}

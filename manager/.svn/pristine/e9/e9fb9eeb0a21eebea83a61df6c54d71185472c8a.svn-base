@@ -1,0 +1,140 @@
+<web-app id="WebApp_ID" version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+	http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <context-param>
+        <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+        <param-value>ApplicationResources</param-value>
+    </context-param>
+
+	<display-name>manager</display-name>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+            classpath*:/spring/applicationContext*.xml
+		</param-value>
+	</context-param>
+    <filter>
+        <filter-name>encoding</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encoding</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--TODO:-->
+    <!--<filter>
+        <filter-name>SecurityUserFilter</filter-name>
+        <filter-class>com.chinadrtv.erp.user.filter.SecurityFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SecurityUserFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>-->
+
+    <!--<filter>
+        <filter-name>OpenSessionInViewFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>OpenSessionInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>-->
+
+    <filter>
+        <filter-name>securityFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>springSecurityFilterChain</param-value>
+        </init-param>
+    </filter>
+
+
+
+    <filter-mapping>
+        <filter-name>securityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/j_spring_security_logout</url-pattern>
+    </filter-mapping>
+
+     <!--TODO:-->
+    <!--<filter>
+        <filter-name>sessionInvalidation</filter-name>
+        <filter-class>com.chinadrtv.erp.sales.filter.SessionInvalidation</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionInvalidation</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>-->
+
+    <!--
+     <filter>
+         <filter-name>TrackFilter</filter-name>
+         <filter-class>com.chinadrtv.erp.user.filter.TrackFilter</filter-class>
+     </filter>
+     <filter-mapping>
+         <filter-name>TrackFilter</filter-name>
+         <url-pattern>/*</url-pattern>
+     </filter-mapping>
+      -->
+    <listener>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+
+
+
+    <filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>manager</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>manager</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!--<error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/common/error.jsp</location>
+    </error-page>-->
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+
+</web-app>

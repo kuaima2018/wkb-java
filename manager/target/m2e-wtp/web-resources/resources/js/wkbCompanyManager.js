@@ -1,0 +1,193 @@
+$(function(){
+    $('#table_config_user').datagrid({
+        url:'/company/user/query',
+        striped: true,
+        border: true,
+        collapsible:true,
+        fitColumns : true,
+        height : 420,
+        width:700,
+        scrollbarSize:-1,
+        columns:[[
+            {field:'ck', width:20, checkbox: true},
+            {field:'uId',title:'用户编号',width:100,editor:'text'},
+            {field:'uName',title:'姓名',width:100,editor:'text'},
+            {field:'uSex',title:'性别',width:100,editor:'text',formatter:function (value){
+                if(value==1)
+                    return '男';
+                else if(value==0)
+                    return '女';
+                else
+                    return '';
+            }
+            },
+            {field:'uBrithday',title:'生日',width:100,editor:'text'},
+            {field:'uMobile',title:'手机',width:100,editor:'text'},
+            {field:'uTel',title:'电话',width:100,editor:'text'},
+            {field:'uEmail',title:'邮箱',width:100,editor:'text'},
+            {field:'uFax',title:'传真',width:100,editor:'text'},
+            {field:'uAddr',title:'地址',width:100,editor:'text'},
+            {field:'applytime',title:'申请时间',width:140,editor:'text'},
+            {field:'jointime',title:'加入时间',width:140,editor:'text'},
+            {field:'uAdmin',title:'角色',width:140,editor:'text',formatter:function (value){
+                if(value==1)
+                    return '管理员';
+                else if(value==2)
+                    return '超级管理员';
+                else
+                    return '';
+            }
+            }
+        ]],
+        remoteSort:false,
+        singleSelect:false,
+        checkOnSelect: true,
+        selectOnCheck: true,
+        pagination:true,
+        queryParams: parmCompanyUserQuery,
+        onBeforeLoad:function(data)
+        {
+            if(data==null||data.xxx!=null)
+                return false;
+        },
+        onLoadSuccess: function(data){
+            if(data.error!=null)
+            {
+                $.messager.alert('系统提示', data.err,'error');
+            }
+        },
+        onLoadError: function(){
+            $.messager.alert('系统提示', "加载失败!",'error');
+        },
+        onUncheck:function(index,data){
+            $(this).datagrid("clearSelections");
+        }
+    });
+    var p_add = $('#table_config_user').datagrid('getPager');
+    $(p_add).pagination({
+        pageSize: 10,
+        pageList: [5,10,15],
+        beforePageText: '',
+        afterPageText: '页    共 {pages}页',
+        displayMsg: '当前 {from} - {to} 记录 共 {total} 记录'
+    });
+
+    $('#btn_config_userSearch').click(function(){
+        if(!$("#fmUserConfig").form("validate"))
+        {
+            return;
+        }
+
+        parmCompanyUserQuery={
+            cId: getNotEmptyString(companyId),
+            uId:getNotEmptyString($("#txt_config_userId").val()),
+            uName:getNotEmptyString($("#txt_config_userName").val()),
+            uMobile:getNotEmptyString($("#txt_config_userMobile").val()),
+            uTel:getNotEmptyString($("#txt_config_userTel").val()),
+            applyBeginTime:getNotEmptyString($("#add_tbBeginJointdt").datebox('getValue')),
+            applyEndTime:getNotEmptyString($("#add_tbEndJointdt").datebox('getValue')),
+            uAdmin:getNotEmptyString($('#txt_config_manager').combobox('getValue'))
+        };
+
+        $('#table_config_user').datagrid('load',parmCompanyUserQuery);
+
+
+    });
+
+    $('#btn_config_userConfirm').click(function(){
+        setUserRoles(true,'是否确定设置选中的用户为管理员？');
+    });
+
+    $('#btn_config_userCancel').click(function(){
+        setUserRoles(false,'是否撤销选中的管理员？');
+    });
+
+});
+
+$.fn.datebox.defaults.formatter = function(date){
+    var y = date.getFullYear();
+    var m = date.getMonth()+1;
+    var d = date.getDate();
+    return y+'-'+(m<10?('0'+m):m)+'-'+(d<10?('0'+d):d);
+};
+
+$.extend($.fn.validatebox.defaults.rules,{
+    querydatevalidator:{
+        validator: function(value)
+        {
+            var date = $.fn.datebox.defaults.parser(value);
+            var s = $.fn.datebox.defaults.formatter(date);
+            return s==value;
+        },message: '日期无效'
+    }
+});
+
+function getNotEmptyString(str){
+    if(str==null||str=="")
+        return null;
+    else
+        return str;
+}
+
+function setUserRoles(bAdmin,msg)
+{
+    var checkedRows = $('#table_config_user').datagrid('getChecked');
+    if(checkedRows.length > 0)
+    {
+        var _list = new Array();
+        for(var i=0;i<checkedRows.length ;i++)
+        {
+            _list.push(checkedRows[i].uId);
+        }
+        var json={
+            uIdList:_list,
+            cId:companyId
+        }
+
+        $.messager.confirm('警告',msg,function(r)
+        {
+            if(r==true)
+            {
+                var parms=JSON.stringify(json);
+                updateUserRoles(bAdmin,parms);
+            }
+        });
+    }else
+    {
+        $.messager.alert('系统提示', '未选中用户');
+    }
+}
+
+function updateUserRoles(bAdmin,parms)
+{
+    var url=null;
+    if(bAdmin==true)
+    {
+        url='/company/user/adminAdd';
+    }
+    else
+    {
+        url='/company/user/adminDel';
+    }
+
+    $.ajax({
+        type : 'POST',
+        url : url,
+        data : parms,
+        dataType : "json",
+        contentType: "application/json; charset=utf-8",
+        success : function (data) {
+            if(data.succ=='succ')
+            {
+                $('#table_config_user').datagrid('reload',parmCompanyUserQuery);
+            }
+            else
+            {
+                if(data.msg!=null)
+                {
+                    $.messager.alert('系统提示',data.msg,'error');
+                }
+            }
+        }
+    });
+}

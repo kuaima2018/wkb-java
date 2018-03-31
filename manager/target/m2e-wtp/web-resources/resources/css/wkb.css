@@ -1,0 +1,41 @@
+.submitBtns { padding:5px 0 ;}
+.submitBtns a {
+    color: #0f4f62;;
+    text-shadow: rgba(255, 255, 255, 0.496094) 0px 1px;
+    padding: 2px 30px;
+    border-width: 1px;
+    border-color: #57a9cb #2a93bf #2683aa #2a93bf ;
+    border-style:solid;
+
+    border-radius: 2px;
+    background: -moz-linear-gradient(#a2d8f7, #4eb4f0) repeat scroll 0 0 transparent;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = #a2d8f7, endColorstr = #4eb4f0);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #a2d8f7), color-stop(100%, #4eb4f0));
+    -webkit-box-shadow: rgba(255, 255, 255, 0.398438) 0px 1px 0px inset;
+}
+
+.submitBtns a:hover {
+    text-decoration: none;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #86cef7), color-stop(100%, #35abf0));
+}.submitBtns a:active {
+     text-decoration: none;
+     border-color: #4192aa;
+     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) inset;
+     background:#4eb4f0;
+ }
+a.logout {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 6px 0 0;
+    opacity: 0.5;
+    cursor: hand;
+    background: url(images/logout.png) no-repeat
+}
+a.logout:hover{
+    background-position:  0 -24px;
+    cursor: hand;
+    background-position: 0 0;
+    opacity: 1.0;
+}

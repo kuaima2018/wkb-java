@@ -1,0 +1,13 @@
+.normal {
+	background-color: #eee;
+	border-right: 4px solid #eee;
+}
+
+#left-nav>li>a:hover,#left-nav>li>a:focus {
+	border-right: 4px solid #428bca;
+}
+
+table.dataTable tr.row_selected {
+	background-color: #428bca;
+	color: #fff;
+}
